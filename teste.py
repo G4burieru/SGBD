@@ -7,6 +7,7 @@ senha = "pscale_pw_dhfPULoPzEv5iCuVS9APbcfLJEXsY454NrThJgcXXPs"
 banco_de_dados = "farmacia"
 
 # Conectar ao banco de dados
+print("Conectando...")
 conexao = mysql.connector.connect(
     host=host,
     user=usuario,
@@ -15,6 +16,7 @@ conexao = mysql.connector.connect(
 )
 
 if conexao.is_connected():
+    print("Conectado ao banco de dados!")
     cursor = conexao.cursor()
 
     # Defina a consulta SQL para criar uma tabela (substitua os campos e tipos de dados conforme necessário)
@@ -80,9 +82,22 @@ def exibir_todos():
         print("tipo:", linha[4])
         print("data:", linha[5])
         
-inserir_pessoa()
-exibir_todos()
-    
+
+def menu():
+    print("BEM VINDO A FARMACIA!\nSELECIONE A OPCAO DESEJADA\n")
+    print("1 - Inserir pessoa\n 2 - Ver todas pessoas cadastradas\n 0 - Sair\n")
+    opcao = input()
+    if opcao == "1":
+        inserir_pessoa()
+    elif opcao == "2":
+        exibir_todos()
+    elif opcao == "0":
+        print("Saindo...")
+    else:
+        print("Opcao invalida, tente novamente")
+        menu()
+
+menu()
 cursor.close()
 conexao.commit() #LEMBRAR DE VER ESSE COMMIT PQ SO ENVIA PRA O BANCO AS COISAS COM ELE, TALVEZ SEJA INTERESSANTE COLOCAR EM TODA FUNCAO
 conexao.close()
