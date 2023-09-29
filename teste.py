@@ -14,6 +14,20 @@ def limpar_tela():
 
 
 def verifica_cpf(cpf):
+
+    if(len(cpf) < 11 or len(cpf) > 11):
+        return False
+    
+    contador_digitos_iguais = 0
+    digito_inicial = cpf[0]
+
+    for digito in cpf:
+        if digito_inicial == digito:
+            contador_digitos_iguais += 1
+
+    if contador_digitos_iguais == 11:
+        return False
+
     cpf_9digitos = cpf[0:9]
     
     cpf_digito_verificador = cpf[9:]
