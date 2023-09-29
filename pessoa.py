@@ -16,7 +16,7 @@ class Pessoa:
         
         self.cpf = input("Insira o CPF:\n")
         self.email = input("Insira o email:\n")
-        self.nome = input("Insira o nome:\n")
+        self.nome = input("Insira o nome:\n").lower()
         self.endereco = input("Insira o endereco:\n")
         self.tipo_pessoa = input("Insira o tipo de pessoa:\n")
         self.data_nascimento[2] = input("Insira o dia da data de nascimento:\n")
@@ -40,5 +40,5 @@ class Pessoa:
             print("data de nascimento:", linha[5])
             print("\n")
             
-        print("Pressione ENTER para continuar...", end=" ")
 
+        print("Pressione ENTER para continuar...", end=" ")
