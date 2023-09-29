@@ -1,4 +1,49 @@
 import mysql.connector
+import os
+import time
+from pessoa import Pessoa
+
+     
+
+#Funcoes auxiliares
+def limpar_tela():
+        if os.name == 'posix':
+            os.system('clear')
+        else:
+            os.system('cls')
+
+def menu():
+    
+    while(1):
+        print("BEM VINDO A FARMACIA!\nSELECIONE A OPCAO DESEJADA\n")
+        print("1 - Inserir pessoa\n2 - Ver todas pessoas cadastradas\n0 - Sair\n")
+        opcao = input()
+        pessoa1 = Pessoa()
+        
+        if opcao == "1":
+            comando = pessoa1.inserir_pessoa()
+            cursor.execute(comando)
+            
+        elif opcao == "2":
+            consulta_sql = "SELECT * FROM Pessoa"
+            cursor.execute(consulta_sql)         #executando a consulta de select *
+            linha = cursor.fetchall()           #guardando todas as linhas da tabela na variavel linhas
+            
+            pessoa1.exibir_todos(cursor.rowcount, linha)
+            input()            #esperando o usuario pressinar enter para continuar            
+            
+        elif opcao == "0":
+            print("Saindo...")
+            time.sleep(1)
+            break
+            
+        else:
+            print("Opcao invalida, tente novamente")
+            time.sleep(2)            
+        
+        conexao.commit()
+        limpar_tela()
+
 
 # Configurações de conexão
 host = "aws.connect.psdb.cloud"
@@ -42,62 +87,42 @@ if conexao.is_connected():
     # Execute a consulta SQL para criar a tabela
     # cursor.execute(criar_tabela_sql)
     # print("Tabela criada com sucesso.")
+    
+    menu()
+    cursor.close()
+    conexao.commit() #LEMBRAR DE VER ESSE COMMIT PQ SO ENVIA PRA O BANCO AS COISAS COM ELE, TALVEZ SEJA INTERESSANTE COLOCAR EM TODA FUNCAO
+    conexao.close()
 
 else:
     print("Não foi possível conectar ao banco de dados.")
     
 
-cpf = ""
-email = ""
-nome = ""
-endereco = ""
-tipo_pessoa = ""
-data_nascimento = ["","",""]
 
-def inserir_pessoa():
-    cpf = input("Insira o CPF:\n")
-    email = input("Insira o email:\n")
-    nome = input("Insira o nome:\n")
-    endereco = input("Insira o endereco:\n")
-    tipo_pessoa = input("Insira o tipo de pessoa:\n")
-    data_nascimento[2] = input("Insira o dia da data de nascimento:\n")
-    data_nascimento[1] = input("Insira o mes da data de nascimento:\n")
-    data_nascimento[0] = input("Insira o ano da data de nascimento:\n")
+# def inserir_pessoa():
+#     cpf = input("Insira o CPF:\n")
+#     email = input("Insira o email:\n")
+#     nome = input("Insira o nome:\n")
+#     endereco = input("Insira o endereco:\n")
+#     tipo_pessoa = input("Insira o tipo de pessoa:\n")
+#     data_nascimento[2] = input("Insira o dia da data de nascimento:\n")
+#     data_nascimento[1] = input("Insira o mes da data de nascimento:\n")
+#     data_nascimento[0] = input("Insira o ano da data de nascimento:\n")
 
-    inserir_dado = "INSERT INTO Pessoa(CPF, email, nome, endereco, tipo_pessoa, data_nascimento) VALUES("+str(cpf)+","+"'"+email+"'"+","+"'"+nome+"'"+","+"'"+endereco+"'"+","+"'"+tipo_pessoa+"'"+","+"'"+str(data_nascimento[0])+"-"+str(data_nascimento[1])+"-"+str(data_nascimento[2])+"')"
+#     inserir_dado = "INSERT INTO Pessoa(CPF, email, nome, endereco, tipo_pessoa, data_nascimento) VALUES("+str(cpf)+","+"'"+email+"'"+","+"'"+nome+"'"+","+"'"+endereco+"'"+","+"'"+tipo_pessoa+"'"+","+"'"+str(data_nascimento[0])+"-"+str(data_nascimento[1])+"-"+str(data_nascimento[2])+"')"
 
-    cursor.execute(inserir_dado)
+#     cursor.execute(inserir_dado)
 
-def exibir_todos():
-    consulta_sql = "SELECT * FROM Pessoa"
-    cursor.execute(consulta_sql)
-    linhas = cursor.fetchall()
-    print("Número total de registros retornados: ", cursor.rowcount)
+# def exibir_todos():
+#     consulta_sql = "SELECT * FROM Pessoa"
+#     cursor.execute(consulta_sql)
+#     linhas = cursor.fetchall()
+#     print("Número total de registros retornados: ", cursor.rowcount)
 
-    for linha in linhas:
-        print("cpf:", linha[0])
-        print("email:", linha[1])
-        print("nome:", linha[2])
-        print("endereco:", linha[3])
-        print("tipo:", linha[4])
-        print("data:", linha[5])
+#     for linha in linhas:
+#         print("cpf:", linha[0])
+#         print("email:", linha[1])
+#         print("nome:", linha[2])
+#         print("endereco:", linha[3])
+#         print("tipo:", linha[4])
+#         print("data:", linha[5])
         
-
-def menu():
-    print("BEM VINDO A FARMACIA!\nSELECIONE A OPCAO DESEJADA\n")
-    print("1 - Inserir pessoa\n 2 - Ver todas pessoas cadastradas\n 0 - Sair\n")
-    opcao = input()
-    if opcao == "1":
-        inserir_pessoa()
-    elif opcao == "2":
-        exibir_todos()
-    elif opcao == "0":
-        print("Saindo...")
-    else:
-        print("Opcao invalida, tente novamente")
-        menu()
-
-menu()
-cursor.close()
-conexao.commit() #LEMBRAR DE VER ESSE COMMIT PQ SO ENVIA PRA O BANCO AS COISAS COM ELE, TALVEZ SEJA INTERESSANTE COLOCAR EM TODA FUNCAO
-conexao.close()
