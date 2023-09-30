@@ -72,7 +72,7 @@ def menu():
     
     while(1):
         print("BEM VINDO A FARMACIA!\nSELECIONE A OPCAO DESEJADA\n")
-        print("1 - Inserir pessoa\n2 - Ver todas pessoas cadastradas\n3 - Excluir uma pessoa do banco de dados\n4 - Pesquisar por nome\n0 - Sair\n")
+        print("1 - Inserir pessoa\n2 - Ver todas pessoas cadastradas\n3 - Excluir pessoa\n4 - Pesquisar por nome\n5 - Editar pessoa\n6 - Exibir uma pessoa\n0 - Sair\n")
         opcao = input()
         pessoa1 = Pessoa()
         
@@ -123,6 +123,25 @@ def menu():
                 pessoa1.exibir_todos(cursor.rowcount, resultados)
 
             input()
+            
+        elif opcao == "5":
+            retorno = pessoa1.editar_pessoa(cursor)
+            
+            if retorno == -1: 
+                print('CPF procurado não está cadastrado ou é inválido')
+            else: 
+                conexao.commit()
+                print('Campo alterado com sucesso!')    
+                
+            time.sleep(3)
+                
+        elif opcao == "6":
+            retorno = pessoa1.exibir_um(cursor)
+            
+            if retorno == -1: 
+                print('CPF procurado não está cadastrado ou é inválido')
+                time.sleep(4)
+            
 
         elif opcao == "0":
             print("Saindo...")
@@ -182,7 +201,7 @@ if conexao.is_connected():
     
     menu()
     cursor.close()
-    conexao.commit() #LEMBRAR DE VER ESSE COMMIT PQ SO ENVIA PRA O BANCO AS COISAS COM ELE, TALVEZ SEJA INTERESSANTE COLOCAR EM TODA FUNCAO
+    #conexao.commit() #LEMBRAR DE VER ESSE COMMIT PQ SO ENVIA PRA O BANCO AS COISAS COM ELE, TALVEZ SEJA INTERESSANTE COLOCAR EM TODA FUNCAO
     conexao.close()
 
 else:
