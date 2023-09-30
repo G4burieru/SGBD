@@ -92,7 +92,7 @@ class Pessoa:
                 print("data de nascimento:", linha[5])
 
         time.sleep(5)
-        
+    
     
     def exibir_todos(self, qtd_cadastros, linha_cadastros):
 
@@ -109,3 +109,72 @@ class Pessoa:
             
 
         print("Pressione ENTER para continuar...", end=" ")
+
+
+    def verifica_cpf(self,cpf):
+
+        if(len(cpf) < 11 or len(cpf) > 11):
+            return False
+    
+        contador_digitos_iguais = 0
+        digito_inicial = cpf[0]
+   
+        for digito in cpf:
+            if digito_inicial == digito:
+                contador_digitos_iguais += 1
+   
+        if contador_digitos_iguais == 11:
+            return False
+   
+        cpf_9digitos = cpf[0:9]
+          
+        cpf_digito_verificador = cpf[9:]
+     
+ 
+        digito_1 = 0
+        digito_2 = 0
+        soma_digito_1 = 0
+        soma_digito_2 = 0
+        for i, digito in enumerate(cpf_9digitos):
+            soma_digito_1 += ((10 - i) * int(digito))
+     
+        resto_soma_digito_1 = soma_digito_1 % 11
+        if resto_soma_digito_1 < 2:
+            digito_1 = 0
+        else: 
+            digito_1 = 11 - resto_soma_digito_1
+     
+        # Se o primeiro digito nao estiver certo, eh porque ja eh invalido
+        if digito_1 != int(cpf_digito_verificador[0]):
+            return False
+     
+        cpf_10digitos = cpf[0:10]
+        for i, digito in enumerate(cpf_10digitos):
+            soma_digito_2 += ((11 - i) * int(digito))
+ 
+        resto_soma_digito_2 = soma_digito_2 % 11
+     
+        if resto_soma_digito_2 < 2:
+            digito_2 = 0
+        else: 
+            digito_2 = 11 - resto_soma_digito_2
+  
+        if digito_2 != int(cpf_digito_verificador[1]):
+            return False
+     
+        return True
+
+    def deletar_pessoa(self,cursor, cpf):
+        
+        consulta_sql = f'Delete FROM Pessoa WHERE CPF={cpf};'
+        cursor.execute(consulta_sql)
+
+        return cursor.rowcount
+    
+    def procurar_nome(self, cursor, nome):
+
+        consulta_sql = f'SELECT * FROM Pessoa WHERE nome = %s'
+        cursor.execute(consulta_sql, (nome,))
+            
+        return cursor 
+
