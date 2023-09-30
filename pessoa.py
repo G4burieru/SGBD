@@ -175,6 +175,9 @@ class Pessoa:
 
         consulta_sql = f'SELECT * FROM Pessoa WHERE nome = %s'
         cursor.execute(consulta_sql, (nome,))
-            
-        return cursor 
-
+        resultados = list()
+        
+        resultados.append(cursor.fetchall())
+        resultados.append(cursor.rowcount)
+        #eturn cursor 
+        return resultados

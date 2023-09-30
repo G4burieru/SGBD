@@ -49,7 +49,7 @@ def menu():
                 time.sleep(2)
                 retorno = pessoa1.deletar_pessoa(cursor, cpf)
 
-                if retorno < 0:
+                if retorno <= 0:
                     print("Nao foi encontrado o CPF no banco de dados.")
                 else:
                     conexao.commit()
@@ -61,13 +61,13 @@ def menu():
         
         elif opcao == "4":
             nome = input("Digite o nome a ser procurado: ").lower()
-            cursor = pessoa1.procurar_nome(cursor, nome)
-            resultados = cursor.fetchall()
+            resultados = pessoa1.procurar_nome(cursor, nome)
+            
 
-            if len(resultados) < 0:
+            if len(resultados[0]) <= 0:
                 print("Nenhuma pessoa encontrada")
             else:
-                pessoa1.exibir_todos(cursor.rowcount, resultados)
+                pessoa1.exibir_todos(resultados[1], resultados[0])
 
             input()
             
