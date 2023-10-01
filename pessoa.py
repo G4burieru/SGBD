@@ -24,6 +24,13 @@ class Pessoa:
     def inserir_pessoa(self):
 
         self.cpf = input("Insira o CPF:\n")
+        validacao = self.verifica_cpf(self.cpf)
+        
+        if not validacao:
+            print("Digite um cpf válido.\n")
+            time.sleep(1)
+            return -1
+        
         self.nome = input("Insira o nome:\n").lower()
         self.email = input("Insira o email:\n").lower()
         self.data_nascimento[2] = input(
@@ -209,19 +216,44 @@ class Pessoa:
         return True
 
     def deletar_pessoa(self, cursor, cpf):
-
+        print("Deletando...")
+        time.sleep(2)
         consulta_sql = f'Delete FROM Pessoa WHERE CPF={cpf};'
         cursor.execute(consulta_sql)
 
-        return cursor.rowcount
+        retorno = cursor.rowcount
+        if retorno <= 0:
+            print("Nao foi encontrado o CPF no banco de dados.")
+        else:  
+            print("Deletado com sucesso.")
+        
+        self.connection.commit()
+        print("Pressione ENTER para continuar...", end=" ")
+        input()
+           
 
     def procurar_nome(self, cursor, nome):
 
         consulta_sql = f'SELECT * FROM Pessoa WHERE nome = %s'
         cursor.execute(consulta_sql, (nome,))
-        resultados = list()
+        self.linhas = cursor.fetchall()
+        
+        self.qtd_cadastros = cursor.rowcount
 
-        resultados.append(cursor.fetchall())
-        resultados.append(cursor.rowcount)
-        # eturn cursor
-        return resultados
+        print("Número total de registros retornados: ", self.qtd_cadastros)
+
+        for linha in self.linhas:
+            print("\ncpf:", linha[0])
+            print("nome:", linha[1])
+            print("email:", linha[2])
+            print("data de nascimento:", linha[3])
+            print("estado:", linha[4]),
+            print("cidade:", linha[5]),
+            print("bairro:", linha[6]),
+            print("rua:", linha[7]),
+            print("numero:", linha[8])
+            print("cargo:", linha[9])
+            print("\n")
+
+        self.connection.commit()
+        input("Pressione ENTER para continuar...")

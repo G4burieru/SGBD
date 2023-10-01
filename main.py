@@ -23,7 +23,8 @@ def menu():
 
         if opcao == "1":
             comando = pessoa1.inserir_pessoa()
-            cursor.execute(comando)
+            if not comando == -1:
+                cursor.execute(comando)
 
         elif opcao == "2":
             pessoa1.exibir_todos(cursor)
@@ -34,31 +35,16 @@ def menu():
 
             if not validacao:
                 print("Digite um CPF valido.\n")
+                time.sleep(2)
 
             else:
-                print("Deletando...")
-                time.sleep(2)
-                retorno = pessoa1.deletar_pessoa(cursor, cpf)
-
-                if retorno <= 0:
-                    print("Nao foi encontrado o CPF no banco de dados.")
-                else:
-                    conexao.commit()
-                    print("Deletado com sucesso.")
-
-            print("Pressione ENTER para continuar...", end=" ")
-            input()
+                pessoa1.deletar_pessoa(cursor, cpf) 
+            
 
         elif opcao == "4":
             nome = input("Digite o nome a ser procurado: ").lower()
-            resultados = pessoa1.procurar_nome(cursor, nome)
-
-            if len(resultados[0]) <= 0:
-                print("Nenhuma pessoa encontrada")
-            else:
-                pessoa1.exibir_todos(resultados[1], resultados[0])
-
-            input()
+            pessoa1.procurar_nome(cursor, nome)
+            
 
         elif opcao == "5":
             retorno = pessoa1.editar_pessoa(cursor)
