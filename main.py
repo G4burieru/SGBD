@@ -26,12 +26,7 @@ def menu():
             cursor.execute(comando)
 
         elif opcao == "2":
-            consulta_sql = "SELECT * FROM Pessoa"
-            cursor.execute(consulta_sql)  # executando a consulta de select *
-            linha = cursor.fetchall()  # guardando todas as linhas da tabela na variavel linhas
-
-            pessoa1.exibir_todos(cursor.rowcount, linha)
-            input()  # esperando o usuario pressinar enter para continuar
+            pessoa1.exibir_todos(cursor)
 
         elif opcao == "3":
             cpf = input("Digite o CPF que deseja deletar: ")

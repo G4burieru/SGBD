@@ -129,11 +129,18 @@ class Pessoa:
         self.connection.commit()
         input("Pressione ENTER para continuar...")
 
-    def exibir_todos(self, qtd_cadastros, linha_cadastros):
+    def exibir_todos(self, cursor):
+        
+        self.consulta_sql = "SELECT * FROM Pessoa"
+        
+        cursor.execute(self.consulta_sql)
+        self.linhas = cursor.fetchall()
+        
+        self.qtd_cadastros = cursor.rowcount
 
-        print("Número total de registros retornados: ", qtd_cadastros)
+        print("Número total de registros retornados: ", self.qtd_cadastros)
 
-        for linha in linha_cadastros:
+        for linha in self.linhas:
             print("\ncpf:", linha[0])
             print("nome:", linha[1])
             print("email:", linha[2])
@@ -147,7 +154,7 @@ class Pessoa:
             print("\n")
 
         self.connection.commit()
-        print("Pressione ENTER para continuar...", end=" ")
+        input("Pressione ENTER para continuar...")
 
     def verifica_cpf(self, cpf):
 
