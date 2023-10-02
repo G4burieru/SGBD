@@ -79,8 +79,8 @@ def menu():
 
 # Configurações de conexão
 host = "aws.connect.psdb.cloud"
-usuario = "cbvc888azaeeqmlastk4"
-senha = "pscale_pw_dhfPULoPzEv5iCuVS9APbcfLJEXsY454NrThJgcXXPs"
+usuario = "8koc3z6iqux0at05np9p"
+senha = "pscale_pw_WmzRrdTny8d8lDgnnG7iNPazSzsGjriqK7WNM4klVbv"
 banco_de_dados = "farmacia"
 
 # Conectar ao banco de dados
@@ -90,7 +90,7 @@ conexao = mysql.connector.connect(
     user=usuario,
     password=senha,
     database=banco_de_dados,
-)
+    )
 
 if conexao.is_connected():
     print("Conectado ao banco de dados!")
