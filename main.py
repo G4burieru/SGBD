@@ -1,7 +1,10 @@
-import mysql.connector
+from dotenv import load_dotenv
+load_dotenv()
+import MySQLdb
 import os
 import time
 from pessoa import Pessoa
+
 
 
 # Funcoes auxiliares
@@ -85,12 +88,18 @@ banco_de_dados = "farmacia"
 
 # Conectar ao banco de dados
 print("Conectando...")
-conexao = mysql.connector.connect(
-    host=host,
-    user=usuario,
-    password=senha,
-    database=banco_de_dados,
-    )
+conexao = MySQLdb.connect(
+  host= os.getenv("DB_HOST"),
+  user=os.getenv("DB_USERNAME"),
+  passwd= os.getenv("DB_PASSWORD"),
+  db= os.getenv("DB_NAME"),
+  autocommit = True,
+  ssl_mode = "VERIFY_IDENTITY",
+  ssl= {
+    "ca": "/etc/ssl/cert.pem"
+  }
+)
+
 
 if conexao.is_connected():
     print("Conectado ao banco de dados!")
