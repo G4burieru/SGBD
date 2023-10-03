@@ -4,16 +4,6 @@ import time
 class Pessoa:
     # Variável de classe
     connection = None
-    cpf = None
-    nome = None
-    email = None
-    data_nascimento = [None, None, None]
-    estado = None
-    cidade = None
-    bairro = None
-    rua = None
-    numero = None
-    tipo_pessoa = None
 
     # Método construtor
     def __init__(self, conexao):
@@ -23,44 +13,62 @@ class Pessoa:
     # Método para imprimir informações da pessoa
     def inserir_pessoa(self):
 
-        self.cpf = input("Insira o CPF:\n")
-        validacao = self.verifica_cpf(self.cpf)
+        data_nascimento = [None, None, None]
+        resultados = 'INVALID'
+
+        while(len(resultados) != 0):
+            validacao = False
+            
+            while(validacao != True):
+                cpf = input("Insira o CPF:\n")
+                validacao = self.verifica_cpf(cpf)
+                if not validacao:
+                    print("Digite um cpf válido.\n")
+                    time.sleep(1)
+                    
+            consulta_sql = f"SELECT * FROM Pessoa WHERE cpf = {cpf}"
+            cursor = self.connection.cursor()
+            cursor.execute(consulta_sql)
+            resultados = cursor.fetchall()
+            if(len(resultados)!= 0):
+                print("CPF já cadastrado!")
+    
         
-        if not validacao:
-            print("Digite um cpf válido.\n")
-            time.sleep(1)
-            return -1
-        
-        self.nome = input("Insira o nome:\n").lower()
-        self.email = input("Insira o email:\n").lower()
-        self.data_nascimento[2] = input(
+        nome = input("Insira o nome:\n").lower()
+        email = input("Insira o email:\n").lower()
+        data_nascimento[2] = input(
             "Insira o dia da data de nascimento:\n")
-        self.data_nascimento[1] = input(
+        data_nascimento[1] = input(
             "Insira o mes da data de nascimento:\n")
-        self.data_nascimento[0] = input(
+        data_nascimento[0] = input(
             "Insira o ano da data de nascimento:\n")
-        self.estado = input("Insira o estado:\n").lower()
-        self.cidade = input("Insira a cidade:\n").lower()
-        self.bairro = input("Insira o bairro:\n").lower()
-        self.rua = input("Insira a rua:\n").lower()
-        self.numero = input("Insira o numero:\n")
+        estado = input("Insira o estado:\n").lower()
+        cidade = input("Insira a cidade:\n").lower()
+        bairro = input("Insira o bairro:\n").lower()
+        rua = input("Insira a rua:\n").lower()
+        numero = input("Insira o numero:\n")
         while (1):
-            self.tipo_pessoa = input(
+            tipo_pessoa = input(
                 "Insira o tipo de pessoa [1] Cliente [2] Funcionario:\n")
-            if (int(self.tipo_pessoa) == 1 or int(self.tipo_pessoa) == 2):
+            if (int(tipo_pessoa) == 1 or int(tipo_pessoa) == 2):
                 break
             else:
                 print("Opcao invalida, tente novamente")
-        if (int(self.tipo_pessoa) == 1):
-            self.tipo_pessoa = "Cliente"
+        if (int(tipo_pessoa) == 1):
+            tipo_pessoa = "Cliente"
         else:
-            self.tipo_pessoa = "Funcionario"
+            tipo_pessoa = "Funcionario"
 
         comando_inserir = f"INSERT INTO Pessoa (cpf, nome, email, data_nascimento, estado, cidade, bairro, rua, numero, tipo_pessoa) VALUES \
-                          ('{self.cpf}', '{self.nome}', '{self.email}', '{self.data_nascimento[0]}-{self.data_nascimento[1]}-{self.data_nascimento[2]}',\
-                          '{self.estado}', '{self.cidade}', '{self.bairro}', '{self.rua}', {self.numero}, '{self.tipo_pessoa}')"
+                          ('{str(cpf)}', '{nome}', '{email}', '{str(data_nascimento[0])}-{str(data_nascimento[1])}-{str(data_nascimento[2])}',\
+                          '{estado}', '{cidade}', '{bairro}', '{rua}', {str(numero)}, '{tipo_pessoa}')"
 
-        return comando_inserir
+        cursor = self.connection.cursor()
+        cursor.execute(comando_inserir)
+        cursor.close()
+        self.connection.commit()
+        print("Pessoa inserida com sucesso!\n")
+        input("Pressione ENTER para continuar...")
 
     def editar_pessoa(self, cursor):
 
@@ -107,18 +115,19 @@ class Pessoa:
 
             cursor.execute(update_sql)
 
-    def exibir_um(self, cursor):
+    def exibir_um(self):
 
         print("Digite o CPF da pessoa que você deseja exibir: ")
         cpf_procurado = input()
 
         consulta_sql = "SELECT * FROM Pessoa WHERE cpf = " + \
             cpf_procurado  # procurando o cpf
+        cursor = self.connection.cursor()
         cursor.execute(consulta_sql)
         resultados = cursor.fetchall()  # armazenando o resultado com aquele cpf
 
         if len(resultados) == 0:  # se não teve nenhum cpf encontrado, nao será possivel exibir
-            return -1
+            print('CPF procurado não está cadastrado ou é inválido')
         else:
             for linha in resultados:
                 print("\ncpf:", linha[0])
@@ -133,21 +142,23 @@ class Pessoa:
                 print("cargo:", linha[9])
                 print("\n")
 
+        cursor.close()
         self.connection.commit()
         input("Pressione ENTER para continuar...")
 
-    def exibir_todos(self, cursor):
+    def exibir_todos(self):
         
-        self.consulta_sql = "SELECT * FROM Pessoa"
+        consulta_sql = "SELECT * FROM Pessoa"
         
-        cursor.execute(self.consulta_sql)
-        self.linhas = cursor.fetchall()
+        cursor = self.connection.cursor()
+        cursor.execute(consulta_sql)
+        linhas = cursor.fetchall()
         
-        self.qtd_cadastros = cursor.rowcount
+        qtd_cadastros = cursor.rowcount
 
-        print("Número total de registros retornados: ", self.qtd_cadastros)
+        print("Número total de registros retornados: ", qtd_cadastros)
 
-        for linha in self.linhas:
+        for linha in linhas:
             print("\ncpf:", linha[0])
             print("nome:", linha[1])
             print("email:", linha[2])
@@ -160,6 +171,7 @@ class Pessoa:
             print("cargo:", linha[9])
             print("\n")
 
+        cursor.close()
         self.connection.commit()
         input("Pressione ENTER para continuar...")
 
@@ -215,9 +227,9 @@ class Pessoa:
 
         return True
 
-    def deletar_pessoa(self, cursor, cpf):
-        print("Deletando...")
-        time.sleep(2)
+    def deletar_pessoa(self):
+        cpf = input("Digite o CPF que deseja deletar: ")
+        cursor = self.connection.cursor()
         consulta_sql = f'Delete FROM Pessoa WHERE CPF={cpf};'
         cursor.execute(consulta_sql)
 
@@ -227,22 +239,24 @@ class Pessoa:
         else:  
             print("Deletado com sucesso.")
         
+        cursor.close()
         self.connection.commit()
-        print("Pressione ENTER para continuar...", end=" ")
-        input()
+        input("Pressione ENTER para continuar...\n")
            
 
-    def procurar_nome(self, cursor, nome):
+    def procurar_nome(self):
 
-        consulta_sql = f'SELECT * FROM Pessoa WHERE nome = %s'
-        cursor.execute(consulta_sql, (nome,))
-        self.linhas = cursor.fetchall()
+        nome = input("Digite o nome a ser procurado: ").lower()
+        consulta_sql = f"SELECT * FROM Pessoa WHERE nome = '{nome}'"
+        cursor = self.connection.cursor()
+        cursor.execute(consulta_sql)
+        linhas = cursor.fetchall()
         
-        self.qtd_cadastros = cursor.rowcount
+        qtd_cadastros = cursor.rowcount
 
-        print("Número total de registros retornados: ", self.qtd_cadastros)
+        print("Número total de registros retornados: ", qtd_cadastros)
 
-        for linha in self.linhas:
+        for linha in linhas:
             print("\ncpf:", linha[0])
             print("nome:", linha[1])
             print("email:", linha[2])
@@ -255,5 +269,6 @@ class Pessoa:
             print("cargo:", linha[9])
             print("\n")
 
+        cursor.close()
         self.connection.commit()
         input("Pressione ENTER para continuar...")
