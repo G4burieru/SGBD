@@ -35,13 +35,7 @@ def menu():
             pessoa1.procurar_nome()
             
         elif opcao == "5":
-            retorno = pessoa1.editar_pessoa(cursor)
-            
-            if retorno == -1:
-                print('CPF procurado não está cadastrado ou é inválido')
-            else:
-                conexao.commit()
-                print('Campo alterado com sucesso!')
+            pessoa1.editar_pessoa()
 
         elif opcao == "6":
             pessoa1.exibir_um()
