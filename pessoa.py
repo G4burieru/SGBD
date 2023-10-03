@@ -279,8 +279,6 @@ class Pessoa:
         
         return dado
     
-    
-    
     def verifica_data(self, data_nasc):
 
         data_formatada = f'{data_nasc[0]}-{data_nasc[1]}-{data_nasc[2]}'
