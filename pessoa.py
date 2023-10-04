@@ -202,8 +202,6 @@ class Pessoa:
         
         qtd_cadastros = cursor.rowcount
 
-        print("Número total de registros retornados: ", qtd_cadastros)
-
         for linha in linhas:
             print("\ncpf:", linha[0])
             print("nome:", linha[1])
@@ -266,6 +264,43 @@ class Pessoa:
         cursor.close()
         self.connection.commit()
         input("Pressione ENTER para continuar...")
+        
+    def gerar_relatorio(self):
+        
+        consulta_sql = "SELECT * FROM Pessoa"
+        
+        cursor = self.connection.cursor()
+        cursor.execute(consulta_sql)
+        linhas = cursor.fetchall()
+        
+        qtd_cadastros = cursor.rowcount
+        cursor.close()
+        self.connection.commit()
+
+        try:
+            with open('relatorio.txt', 'w') as arquivo:
+                
+                arquivo.write(f'Número total de registros retornados: {qtd_cadastros}\n')
+                
+                for linha in linhas:
+                    arquivo.write(f"\ncpf: {linha[0]}\n" )
+                    arquivo.write(f"nome: {linha[1]}\n")
+                    arquivo.write(f"email: {linha[2]}\n")
+                    arquivo.write(f"data de nascimento: {linha[3]}\n")
+                    arquivo.write(f"estado: {linha[4]}\n"),
+                    arquivo.write(f"cidade: {linha[5]}\n"),
+                    arquivo.write(f"bairro: {linha[6]}\n"),
+                    arquivo.write(f"rua: {linha[7]}\n"),
+                    arquivo.write(f"numero: {linha[8]}\n")
+                    arquivo.write(f"cargo {linha[9]}\n")
+                    
+                print('Relatório gerado com sucesso!')
+                time.sleep(2)
+        except IOError as e:
+            print(f"Erro ao criar ou escrever no arquivo: {str(e)}")
+
+        
+        
 
     def input_numerica(self):
 

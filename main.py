@@ -17,7 +17,7 @@ def menu():
 
     while (1):
         print("BEM VINDO A FARMACIA!\nSELECIONE A OPCAO DESEJADA\n")
-        print("1 - Inserir pessoa\n2 - Ver todas pessoas cadastradas\n3 - Excluir pessoa\n4 - Pesquisar por nome\n5 - Editar pessoa\n6 - Exibir uma pessoa\n0 - Sair\n")
+        print("1 - Inserir pessoa\n2 - Ver todas pessoas cadastradas\n3 - Excluir pessoa\n4 - Pesquisar por nome\n5 - Editar pessoa\n6 - Exibir uma pessoa\n7 - Gerar relatório\n0 - Sair\n")
         opcao = input()
         pessoa1 = Pessoa(conexao)
 
@@ -39,6 +39,9 @@ def menu():
 
         elif opcao == "6":
             pessoa1.exibir_um()
+
+        elif opcao == "7":
+            pessoa1.gerar_relatorio()
 
         elif opcao == "0":
             print("Saindo...")

@@ -1,0 +1,34 @@
+Número total de registros retornados: 3
+
+cpf: 11819692477
+nome: leandro
+email: leandrolucas1234@outlook.com
+data de nascimento: 2002-04-27
+estado: pb
+cidade: joao pessoa
+bairro: bancarios
+rua: 1405
+numero: 1405
+cargo Funcionario
+
+cpf: 71388143488
+nome: Amante de Juliana
+email: jujulover@gmail.com
+data de nascimento: 2000-09-09
+estado: Pernambuco imortal imortal
+cidade: santa cruz do capibaribe
+bairro: i
+rua: eu amo juju
+numero: 6
+cargo Cliente
+
+cpf: 71652821490
+nome: juliane
+email: juliana@hotmail.com
+data de nascimento: 2023-07-10
+estado: pb
+cidade: jp
+bairro: torre
+rua: etelvina macedo de mendonca
+numero: 231
+cargo Cliente
