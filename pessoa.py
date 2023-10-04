@@ -17,7 +17,7 @@ class Pessoa:
         data_nascimento = [None, None, None]
         resultados = 'INVALID'
 
-        print("Insira o CPF:\n")
+        print("Insira o CPF:")
         cpf = self.input_numerica()
         validacao = self.verifica_cpf(cpf)
         if validacao == False:             #cpf é invalido
@@ -47,7 +47,7 @@ class Pessoa:
         validacao_data = self.verifica_data(data_nascimento)
 
         if validacao_data == False:
-            print("\nDigite uma data válida! Retornando ao menu...\n")
+            print("Data inválida! Retornando ao menu...\n")
             time.sleep(3)
             return -3
                 
@@ -55,7 +55,7 @@ class Pessoa:
         cidade = input("Insira a cidade:\n").lower()
         bairro = input("Insira o bairro:\n").lower()
         rua = input("Insira a rua:\n").lower()
-        print('Insira o número da residência:\n')
+        print('Insira o número da residência:')
         numero = self.input_numerica()
 
         while (1):
@@ -123,7 +123,7 @@ class Pessoa:
                 validacao_data = self.verifica_data([subst_ano, subst_mes, subst_dia])
 
                 if validacao_data == False:
-                    print("\nDigite uma data válida! Retornando ao menu...\n")
+                    print("Data inválida! Retornando ao menu...\n")
                     time.sleep(3)
                     return -2
 
@@ -281,11 +281,28 @@ class Pessoa:
     
     def verifica_data(self, data_nasc):
 
-        data_formatada = f'{data_nasc[0]}-{data_nasc[1]}-{data_nasc[2]}'
-        data_cadastrada = datetime.strptime(data_formatada, '%Y-%m-%d')
+        # data_formatada = f'{data_nasc[0]}-{data_nasc[1]}-{data_nasc[2]}'
+        # data_cadastrada = datetime.strptime(data_formatada, '%Y-%m-%d')
+        
+        data_nasc[0] = int(data_nasc[0])
+        data_nasc[1] = int(data_nasc[1])
+        data_nasc[2] = int(data_nasc[2])
 
-        if data_cadastrada > datetime.now():
+        if (data_nasc[0] > date.today().year) or (data_nasc[1] > date.today().month and data_nasc[0] == date.today().year):
+            return False 
+            
+        elif data_nasc[2] > date.today().day and data_nasc[1] == date.today().month and data_nasc[1] == date.today().month and data_nasc[0] == date.today().year:
             return False
+
+        elif data_nasc[2] > 31 or data_nasc[1] > 12:
+            return False
+        
+        elif data_nasc[2] > 28 and data_nasc[1] == 2:  
+            return False
+        
+        elif (data_nasc[2] == 31) and (data_nasc[1] == 4 or data_nasc[1] == 6 or data_nasc[1] == 9 or data_nasc[1] == 11):
+            return False
+        
         else: 
             return True
 
