@@ -292,7 +292,7 @@ class Pessoa:
                     arquivo.write(f"bairro: {linha[6]}\n"),
                     arquivo.write(f"rua: {linha[7]}\n"),
                     arquivo.write(f"numero: {linha[8]}\n")
-                    arquivo.write(f"cargo {linha[9]}\n")
+                    arquivo.write(f"cargo: {linha[9]}\n")
                     
                 print('Relatório gerado com sucesso!')
                 time.sleep(2)
