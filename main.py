@@ -1,7 +1,7 @@
 import mysql.connector
 import os
 import time
-from pessoa import Pessoa
+from classes.pessoa import Pessoa
 
 
 
