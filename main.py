@@ -11,9 +11,37 @@ def limpar_tela():
         os.system('clear')
     else:
         os.system('cls')
+        
+        
+def menu_principal():
+    
+    while (1):
+        print("BEM VINDO A FARMACIA!\nSELECIONE A OPCAO DESEJADA\n")
+        print("1- Ver produtos")
+        print("2- Fazer novo cadastro")
+        print("3- Entrar em conta existente")
+        print("0- Sair")
+        opcao_principal = input()
+        
+        if(opcao_principal == '1'):
+            print("aqui deveria ver os produtos")
+            
+        elif(opcao_principal == '2'):
+            print("fazer cadastro: funcionario/cliente")
+            menu_ṕessoa()
+            
+        elif(opcao_principal == '3'):
+            print("so fazer login")
+        
+        elif(opcao_principal == '0'):
+            print("Sistema encerrado.")
+            break
+        else:
+            print("Opção inválida")
+                    
+        
 
-
-def menu():
+def menu_ṕessoa():
 
     while (1):
         print("BEM VINDO A FARMACIA!\nSELECIONE A OPCAO DESEJADA\n")
@@ -105,7 +133,7 @@ if conexao.is_connected():
 
     cursor.close()
     limpar_tela()
-    menu()
+    menu_principal()
     conexao.close()
 
 else:
