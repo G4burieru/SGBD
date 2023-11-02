@@ -65,8 +65,8 @@ class Pessoa:
             tipo_pessoa = "Funcionario"
 
         #comando SQL #############################################################
-        comando_inserir = f"INSERT INTO Pessoa (cpf, nome, email, data_nascimento, tipo_pessoa) VALUES \
-                          ('{str(cpf)}', '{nome}', '{email}', '{str(data_nascimento[0])}-{str(data_nascimento[1])}-{str(data_nascimento[2])}','{tipo_pessoa}')"
+        comando_inserir = f"INSERT INTO Pessoa (cpf, nome, email, data_nascimento, tipo_pessoa, cadastro_ativo) VALUES \
+                          ('{str(cpf)}', '{nome}', '{email}', '{str(data_nascimento[0])}-{str(data_nascimento[1])}-{str(data_nascimento[2])}','{tipo_pessoa}', 1)"
 
         self.gerencia.acessa_banco(comando_inserir)
         
@@ -160,7 +160,7 @@ class Pessoa:
         cpf_procurado = self.input_numerica()
 
         consulta_sql = "SELECT P.CPF, P.nome, P.email, P.data_nascimento, E.estado, E.cidade, \
-        E.bairro, E.rua, E.numero, P.tipo_pessoa FROM Pessoa P, Endereco E WHERE P.cpf = E.cpf AND P.CPF = " + cpf_procurado  # procurando o cpf
+        E.bairro, E.rua, E.numero, P.tipo_pessoa, P.cadastro_ativo FROM Pessoa P, Endereco E WHERE P.cpf = E.cpf AND P.CPF = " + cpf_procurado  # procurando o cpf
         
         resultados = self.gerencia.acessa_banco(consulta_sql)
 
@@ -178,6 +178,7 @@ class Pessoa:
                 print("rua:", linha[7])
                 print("numero:", linha[8])
                 print("cargo:", linha[9])
+                print("cadastro ativo:", bool(linha[10]))
                 print("\n")
 
         input("Pressione ENTER para continuar...")
@@ -186,7 +187,7 @@ class Pessoa:
     def exibir_todos(self):
         
         consulta_sql = "SELECT P.CPF, P.nome, P.email, P.data_nascimento, E.estado, E.cidade, \
-        E.bairro, E.rua, E.numero, P.tipo_pessoa FROM Pessoa P, Endereco E WHERE P.cpf = E.cpf ORDER BY P.nome ASC"
+        E.bairro, E.rua, E.numero, P.tipo_pessoa FROM Pessoa P, Endereco E WHERE P.cpf = E.cpf AND P.cadastro_ativo = 1 ORDER BY P.nome ASC"
 
         linhas = self.gerencia.acessa_banco(consulta_sql)
 
@@ -223,7 +224,7 @@ class Pessoa:
 
         nome = input("Digite o nome a ser procurado: ").lower()
         consulta_sql = f"SELECT P.CPF, P.nome, P.email, P.data_nascimento, E.estado, E.cidade, \
-        E.bairro, E.rua, E.numero, P.tipo_pessoa FROM Pessoa P, Endereco E WHERE P.cpf = E.cpf AND P.nome = '{nome}' ORDER BY P.nome ASC"
+        E.bairro, E.rua, E.numero, P.tipo_pessoa FROM Pessoa P, Endereco E WHERE P.cpf = E.cpf AND P.nome = '{nome}' AND P.cadastro_ativo = 1 ORDER BY P.nome ASC"
         retorno = self.gerencia.acessa_banco(consulta_sql)
         
         qtd_cadastros = len(retorno)
@@ -248,7 +249,7 @@ class Pessoa:
     def gerar_relatorio(self):
         
         consulta_sql = "SELECT P.CPF, P.nome, P.email, P.data_nascimento, E.estado, E.cidade, \
-        E.bairro, E.rua, E.numero, P.tipo_pessoa FROM Pessoa P, Endereco E WHERE P.cpf = E.cpf ORDER BY P.nome ASC"
+        E.bairro, E.rua, E.numero, P.tipo_pessoa FROM Pessoa P, Endereco E WHERE P.cpf = E.cpf AND P.cadastro_ativo = 1 ORDER BY P.nome ASC"
         
         retorno = self.gerencia.acessa_banco(consulta_sql)
         

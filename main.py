@@ -2,7 +2,8 @@ import mysql.connector
 import os
 import time
 from classes_entidades.pessoa import Pessoa
-
+import termcolor
+from termcolor import colored
 
 
 # Funcoes auxiliares
@@ -16,11 +17,11 @@ def limpar_tela():
 def menu_principal():
     
     while (1):
-        print("BEM VINDO A FARMACIA!\nSELECIONE A OPCAO DESEJADA\n")
-        print("1- Ver produtos")
-        print("2- Fazer novo cadastro")
-        print("3- Entrar em conta existente")
-        print("0- Sair")
+        print(colored("BEM VINDO A", "green", attrs=["bold"]), colored("FARMACIA", "red", attrs=["bold"]), colored("!\nSELECIONE A OPCAO DESEJADA\n", "green", attrs=["bold"]))
+        print(colored("1- Ver produtos", "red"))
+        print(colored("2- Gerenciar cadastros", "red"))
+        print(colored("3- Entrar em conta existente", "red"))
+        print(colored("0- Sair", "red"))
         opcao_principal = input()
         
         if(opcao_principal == '1'):
@@ -28,8 +29,7 @@ def menu_principal():
             time.sleep(2)
             
         elif(opcao_principal == '2'):
-            print("fazer cadastro: funcionario/cliente")
-            menu_ṕessoa()
+            menu_pessoa()
             
         elif(opcao_principal == '3'):
             print("so fazer login: funcionario/cliente")
@@ -47,11 +47,12 @@ def menu_principal():
                     
         
 
-def menu_ṕessoa():
+def menu_pessoa():
 
     while (1):
-        print("BEM VINDO A FARMACIA!\nSELECIONE A OPCAO DESEJADA\n")
-        print("1 - Inserir pessoa\n2 - Ver todas pessoas cadastradas\n3 - Excluir pessoa\n4 - Pesquisar por nome\n5 - Editar pessoa\n6 - Exibir uma pessoa\n7 - Gerar relatório\n0 - Sair\n")
+        limpar_tela()
+        print(colored("1 - Inserir pessoa\n2 - Ver todas pessoas cadastradas\n3 - Excluir pessoa\n4 - Pesquisar por nome\
+                       \n5 - Editar pessoa\n6 - Exibir uma pessoa\n7 - Gerar relatório\n0 - Sair\n", "red"))
         opcao = input()
         pessoa1 = Pessoa(conexao)
 
@@ -111,15 +112,18 @@ if conexao.is_connected():
 
     # Defina a consulta SQL para criar uma tabela (substitua os campos e tipos de dados conforme necessário)
     criar_tabela_sql = """
-    CREATE TABLE IF NOT EXISTS HistoricoDeVenda (
+    CREATE TABLE IF NOT EXISTS Pessoa (
         CPF varchar(11) PRIMARY KEY,
-        login VARCHAR(255) NOT NULL,
-        cod_venda INT NOT NULL
+        email VARCHAR(255) NOT NULL,
+        nome VARCHAR(255) NOT NULL,
+        tipo_pessoa VARCHAR(255) NOT NULL,
+        data_nascimento DATE NOT NULL,
+        cadastro_ativo BOOLEAN NOT NULL
      )
     """
 
     deletar_tabela_sql = """
-    DROP TABLE HistoricoDeVenda
+    DROP TABLE Pessoa
     """
 
     # Execute a consulta SQL para deletar a tabela

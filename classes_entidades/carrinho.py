@@ -17,7 +17,7 @@ class Venda_itens:
         print("Quantidade: ")
         qtd_med = input()
         
-        comando_inserir = f"INSERT INTO Venda_itens (codigo_venda, codigo_med, quantidade) VALUES \
+        comando_inserir = f"INSERT INTO Carrinho (codigo_venda, codigo_med, quantidade) VALUES \
                           ('{cod_venda}', '{cod_med}', {qtd_med})"
                           
         self.gerencia.acessa_banco(comando_inserir)
@@ -25,7 +25,7 @@ class Venda_itens:
         
     def recuperar_itens_venda(self, cod_venda):
         
-        consulta_sql = f"SELECT I.*, M.nome, M.preco, M.categoria, M.classificacao FROM Venda_itens I JOIN Medicamento M \
+        consulta_sql = f"SELECT I.*, M.nome, M.preco, M.categoria, M.classificacao FROM Carrinho I JOIN Medicamento M \
                         ON I.cod_med = M.CodigoMedicamento WHERE I.cod_med = '{cod_venda}';"
         
         retorno = self.gerencia.acessa_banco(consulta_sql)
