@@ -65,10 +65,14 @@ class Pessoa:
             tipo_pessoa = "Funcionario"
 
         #comando SQL #############################################################
-        comando_inserir = f"INSERT INTO Pessoa (cpf, nome, email, data_nascimento, estado, cidade, bairro, rua, numero, tipo_pessoa) VALUES \
-                          ('{str(cpf)}', '{nome}', '{email}', '{str(data_nascimento[0])}-{str(data_nascimento[1])}-{str(data_nascimento[2])}',\
-                          '{estado}', '{cidade}', '{bairro}', '{rua}', {str(numero)}, '{tipo_pessoa}')"
+        comando_inserir = f"INSERT INTO Pessoa (cpf, nome, email, data_nascimento, tipo_pessoa) VALUES \
+                          ('{str(cpf)}', '{nome}', '{email}', '{str(data_nascimento[0])}-{str(data_nascimento[1])}-{str(data_nascimento[2])}','{tipo_pessoa}')"
 
+        self.gerencia.acessa_banco(comando_inserir)
+        
+        comando_inserir = f"INSERT INTO Endereco (cpf, estado, cidade, bairro, rua, numero) VALUES \
+                          ('{str(cpf)}','{estado}', '{cidade}', '{bairro}', '{rua}', {str(numero)})"
+                          
         self.gerencia.acessa_banco(comando_inserir)
         ##########################################################################
         
@@ -155,7 +159,8 @@ class Pessoa:
         print("Digite o CPF da pessoa que você deseja exibir: ")
         cpf_procurado = self.input_numerica()
 
-        consulta_sql = "SELECT * FROM Pessoa WHERE cpf = " + cpf_procurado  # procurando o cpf
+        consulta_sql = "SELECT P.CPF, P.nome, P.email, P.data_nascimento, E.estado, E.cidade, \
+        E.bairro, E.rua, E.numero, P.tipo_pessoa FROM Pessoa P, Endereco E WHERE P.cpf = E.cpf AND P.CPF = " + cpf_procurado  # procurando o cpf
         
         resultados = self.gerencia.acessa_banco(consulta_sql)
 
@@ -167,19 +172,21 @@ class Pessoa:
                 print("nome:", linha[1])
                 print("email:", linha[2])
                 print("data de nascimento:", linha[3])
-                print("estado:", linha[4]),
-                print("cidade:", linha[5]),
-                print("bairro:", linha[6]),
-                print("rua:", linha[7]),
+                print("estado:", linha[4])
+                print("cidade:", linha[5])
+                print("bairro:", linha[6])
+                print("rua:", linha[7])
                 print("numero:", linha[8])
                 print("cargo:", linha[9])
                 print("\n")
 
         input("Pressione ENTER para continuar...")
 
+
     def exibir_todos(self):
         
-        consulta_sql = "SELECT * FROM Pessoa"
+        consulta_sql = "SELECT P.CPF, P.nome, P.email, P.data_nascimento, E.estado, E.cidade, \
+        E.bairro, E.rua, E.numero, P.tipo_pessoa FROM Pessoa P, Endereco E WHERE P.cpf = E.cpf ORDER BY P.nome ASC"
 
         linhas = self.gerencia.acessa_banco(consulta_sql)
 
@@ -188,20 +195,20 @@ class Pessoa:
             print("nome:", linha[1])
             print("email:", linha[2])
             print("data de nascimento:", linha[3])
-            print("estado:", linha[4]),
-            print("cidade:", linha[5]),
-            print("bairro:", linha[6]),
-            print("rua:", linha[7]),
+            print("estado:", linha[4])
+            print("cidade:", linha[5])
+            print("bairro:", linha[6])
+            print("rua:", linha[7])
             print("numero:", linha[8])
             print("cargo:", linha[9])
             print("\n")
             
-        time.sleep(3)
+        input("Pressione ENTER para continuar...")
             
     def deletar_pessoa(self):
         print("Digite o CPF que deseja deletar: ")
         cpf = self.input_numerica()
-        consulta_sql = f'Delete FROM Pessoa WHERE CPF={cpf};'
+        consulta_sql = f'Delete FROM Pessoa, Endereco USING Pessoa INNER JOIN Endereco WHERE Pessoa.CPF = Endereco.CPF AND Pessoa.CPF={cpf};'
         
         retorno = self.gerencia.acessa_banco(consulta_sql)
 
@@ -215,7 +222,8 @@ class Pessoa:
     def procurar_nome(self):
 
         nome = input("Digite o nome a ser procurado: ").lower()
-        consulta_sql = f"SELECT * FROM Pessoa WHERE nome = '{nome}'"
+        consulta_sql = f"SELECT P.CPF, P.nome, P.email, P.data_nascimento, E.estado, E.cidade, \
+        E.bairro, E.rua, E.numero, P.tipo_pessoa FROM Pessoa P, Endereco E WHERE P.cpf = E.cpf AND P.nome = '{nome}' ORDER BY P.nome ASC"
         retorno = self.gerencia.acessa_banco(consulta_sql)
         
         qtd_cadastros = len(retorno)
@@ -227,10 +235,10 @@ class Pessoa:
             print("nome:", linha[1])
             print("email:", linha[2])
             print("data de nascimento:", linha[3])
-            print("estado:", linha[4]),
-            print("cidade:", linha[5]),
-            print("bairro:", linha[6]),
-            print("rua:", linha[7]),
+            print("estado:", linha[4])
+            print("cidade:", linha[5])
+            print("bairro:", linha[6])
+            print("rua:", linha[7])
             print("numero:", linha[8])
             print("cargo:", linha[9])
             print("\n")
@@ -239,30 +247,27 @@ class Pessoa:
         
     def gerar_relatorio(self):
         
-        consulta_sql = "SELECT * FROM Pessoa"
+        consulta_sql = "SELECT P.CPF, P.nome, P.email, P.data_nascimento, E.estado, E.cidade, \
+        E.bairro, E.rua, E.numero, P.tipo_pessoa FROM Pessoa P, Endereco E WHERE P.cpf = E.cpf ORDER BY P.nome ASC"
         
-        cursor = self.connection.cursor()
-        cursor.execute(consulta_sql)
-        linhas = cursor.fetchall()
+        retorno = self.gerencia.acessa_banco(consulta_sql)
         
-        qtd_cadastros = cursor.rowcount
-        cursor.close()
-        self.connection.commit()
+        qtd_cadastros = len(retorno)
 
         try:
             with open('relatorio.txt', 'w') as arquivo:
                 
                 arquivo.write(f'Número total de registros retornados: {qtd_cadastros}\n')
                 
-                for linha in linhas:
+                for linha in retorno:
                     arquivo.write(f"\ncpf: {linha[0]}\n" )
                     arquivo.write(f"nome: {linha[1]}\n")
                     arquivo.write(f"email: {linha[2]}\n")
                     arquivo.write(f"data de nascimento: {linha[3]}\n")
-                    arquivo.write(f"estado: {linha[4]}\n"),
-                    arquivo.write(f"cidade: {linha[5]}\n"),
-                    arquivo.write(f"bairro: {linha[6]}\n"),
-                    arquivo.write(f"rua: {linha[7]}\n"),
+                    arquivo.write(f"estado: {linha[4]}\n")
+                    arquivo.write(f"cidade: {linha[5]}\n")
+                    arquivo.write(f"bairro: {linha[6]}\n")
+                    arquivo.write(f"rua: {linha[7]}\n")
                     arquivo.write(f"numero: {linha[8]}\n")
                     arquivo.write(f"cargo: {linha[9]}\n")
                     
