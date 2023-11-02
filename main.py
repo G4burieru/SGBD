@@ -1,7 +1,7 @@
 import mysql.connector
 import os
 import time
-from classes.pessoa import Pessoa
+from classes_entidades.pessoa import Pessoa
 
 
 
@@ -25,19 +25,25 @@ def menu_principal():
         
         if(opcao_principal == '1'):
             print("aqui deveria ver os produtos")
+            time.sleep(2)
             
         elif(opcao_principal == '2'):
             print("fazer cadastro: funcionario/cliente")
             menu_ṕessoa()
             
         elif(opcao_principal == '3'):
-            print("so fazer login")
+            print("so fazer login: funcionario/cliente")
+            time.sleep(2)
         
         elif(opcao_principal == '0'):
             print("Sistema encerrado.")
+            time.sleep(2)
             break
         else:
             print("Opção inválida")
+            time.sleep(2)
+            
+        limpar_tela()
                     
         
 

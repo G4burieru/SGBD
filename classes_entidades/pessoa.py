@@ -1,4 +1,5 @@
 import time
+from gerencia_sql import Gerenciamento
 from datetime import datetime
 from datetime import date
 
@@ -9,6 +10,7 @@ class Pessoa:
     # Método construtor
     def __init__(self, conexao):
         self.connection = conexao
+        self.gerencia = Gerenciamento(conexao)
         pass
 
     # Método para imprimir informações da pessoa
@@ -26,13 +28,9 @@ class Pessoa:
             return -1
                     
         consulta_sql = f"SELECT * FROM Pessoa WHERE cpf = {cpf}"
-        cursor = self.connection.cursor()
-        cursor.execute(consulta_sql)
-        resultados = cursor.fetchall()
-        cursor.close()
-        self.connection.commit()
-
-        if(len(resultados)!= 0): #se o cpf foi encontrado no banco de dados
+        retorno = self.gerencia.acessa_banco(consulta_sql)
+        
+        if(retorno != 0): #se o cpf foi encontrado no banco de dados
             print("\nCPF já cadastrado no banco de dados! Retornando ao menu...\n")
             time.sleep(3)
             return -2
@@ -70,14 +68,13 @@ class Pessoa:
         else:
             tipo_pessoa = "Funcionario"
 
+        ##############################################################3
         comando_inserir = f"INSERT INTO Pessoa (cpf, nome, email, data_nascimento, estado, cidade, bairro, rua, numero, tipo_pessoa) VALUES \
                           ('{str(cpf)}', '{nome}', '{email}', '{str(data_nascimento[0])}-{str(data_nascimento[1])}-{str(data_nascimento[2])}',\
                           '{estado}', '{cidade}', '{bairro}', '{rua}', {str(numero)}, '{tipo_pessoa}')"
 
-        cursor = self.connection.cursor()
-        cursor.execute(comando_inserir)
-        cursor.close()
-        self.connection.commit()
+        self.gerencia.acessa_banco(comando_inserir)
+        
         print("Pessoa inserida com sucesso!\n")
         input("Pressione ENTER para continuar...")
 
@@ -87,13 +84,10 @@ class Pessoa:
         cpf_procurado = self.input_numerica()
 
         consulta_sql = "SELECT * FROM Pessoa WHERE cpf = " + cpf_procurado  # procurando o cpf
-        cursor = self.connection.cursor()
-        cursor.execute(consulta_sql)
-        resultados = cursor.fetchall()  # armazenando o resultado com aquele cpf
-        cursor.close()
-        self.connection.commit()
+        
+        retorno = self.gerencia.acessa_banco(consulta_sql)
 
-        if len(resultados) == 0:  # se não teve nenhum cpf encontrado, nao será possivel alterar
+        if retorno == 0:  # se não teve nenhum cpf encontrado, nao será possivel alterar
             print('CPF procurado não está cadastrado ou é inválido')
             time.sleep(3)
             return -1
@@ -155,10 +149,7 @@ class Pessoa:
 
                 update_sql = f"UPDATE Pessoa SET {campos[int(opcao)]} = '{subst_campo}' WHERE cpf = '{cpf_procurado}';"
             
-            cursor = self.connection.cursor()
-            cursor.execute(update_sql)
-            cursor.close()
-            self.connection.commit()
+            self.gerencia.acessa_banco(update_sql)
             print('Alteração realizada com sucesso!')
             time.sleep(3)
 
@@ -168,9 +159,8 @@ class Pessoa:
         cpf_procurado = self.input_numerica()
 
         consulta_sql = "SELECT * FROM Pessoa WHERE cpf = " + cpf_procurado  # procurando o cpf
-        cursor = self.connection.cursor()
-        cursor.execute(consulta_sql)
-        resultados = cursor.fetchall()  # armazenando o resultado com aquele cpf
+        
+        resultados = self.gerencia.acessa_banco(consulta_sql)
 
         if len(resultados) == 0:  # se não teve nenhum cpf encontrado, nao será possivel exibir
             print('CPF procurado não está cadastrado ou é inválido')
@@ -188,19 +178,13 @@ class Pessoa:
                 print("cargo:", linha[9])
                 print("\n")
 
-        cursor.close()
-        self.connection.commit()
         input("Pressione ENTER para continuar...")
 
     def exibir_todos(self):
         
         consulta_sql = "SELECT * FROM Pessoa"
-        
-        cursor = self.connection.cursor()
-        cursor.execute(consulta_sql)
-        linhas = cursor.fetchall()
-        
-        qtd_cadastros = cursor.rowcount
+
+        linhas = self.gerencia.acessa_banco(consulta_sql)
 
         for linha in linhas:
             print("\ncpf:", linha[0])
@@ -214,41 +198,34 @@ class Pessoa:
             print("numero:", linha[8])
             print("cargo:", linha[9])
             print("\n")
-
-        cursor.close()
-        self.connection.commit()
-        input("Pressione ENTER para continuar...")
-
+            
+        time.sleep(3)
+            
     def deletar_pessoa(self):
         print("Digite o CPF que deseja deletar: ")
         cpf = self.input_numerica()
-        cursor = self.connection.cursor()
         consulta_sql = f'Delete FROM Pessoa WHERE CPF={cpf};'
-        cursor.execute(consulta_sql)
+        
+        retorno = self.gerencia.acessa_banco(consulta_sql)
 
-        retorno = cursor.rowcount
         if retorno <= 0:
             print("CPF procurado não está cadastrado ou é inválido")
         else:  
             print("Deletado com sucesso.")
         
-        cursor.close()
-        self.connection.commit()
         input("Pressione ENTER para continuar...\n")      
 
     def procurar_nome(self):
 
         nome = input("Digite o nome a ser procurado: ").lower()
         consulta_sql = f"SELECT * FROM Pessoa WHERE nome = '{nome}'"
-        cursor = self.connection.cursor()
-        cursor.execute(consulta_sql)
-        linhas = cursor.fetchall()
+        retorno = self.gerencia.acessa_banco(consulta_sql)
         
-        qtd_cadastros = cursor.rowcount
+        qtd_cadastros = len(retorno)
 
         print("Número total de registros retornados: ", qtd_cadastros)
 
-        for linha in linhas:
+        for linha in retorno:
             print("\ncpf:", linha[0])
             print("nome:", linha[1])
             print("email:", linha[2])
@@ -261,8 +238,6 @@ class Pessoa:
             print("cargo:", linha[9])
             print("\n")
 
-        cursor.close()
-        self.connection.commit()
         input("Pressione ENTER para continuar...")
         
     def gerar_relatorio(self):
