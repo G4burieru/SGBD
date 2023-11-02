@@ -1,12 +1,11 @@
 import time
+from gerencia_sql import Gerenciamento
 
 class Medicamento:
-    # Variável de classe
-    connection = None
 
     # Método construtor
     def __init__(self, conexao):
-        self.connection = conexao
+        self.gerencia = Gerenciamento(conexao)
         pass
     
     def cadastrar_medicamento(self):
@@ -14,14 +13,12 @@ class Medicamento:
         print("Insira o código do medicamento a ser cadastrado:")
         codigo_med = input()
         
+        #comando sql ####################################################
         consulta_sql = f"SELECT * FROM Medicamento WHERE codigo = {codigo_med}"
-        cursor = self.connection.cursor()
-        cursor.execute(consulta_sql)
-        resultados = cursor.fetchall()
-        cursor.close()
-        self.connection.commit()
+        retorno = self.gerencia.acessa_banco(consulta_sql)
+        ###################################################3
 
-        if(len(resultados)!= 0): #se o codigo foi encontrado no banco de dados
+        if(retorno != 0): #se o codigo foi encontrado no banco de dados
             print("\nMedicamento já cadastrado no banco de dados! Retornando ao menu...\n")
             return -2
         
@@ -44,10 +41,7 @@ class Medicamento:
         comando_inserir = f"INSERT INTO Medicamento (codigo, nome, valor, categoria, classificacao, producao_mari) VALUES \
                           ('{codigo_med}', '{nome_med}', '{valor_med}', '{cat_med}', '{classif_med}', '{prod_mari}')"
 
-        cursor = self.connection.cursor()
-        cursor.execute(comando_inserir)
-        cursor.close()
-        self.connection.commit()
+        self.gerencia.acessa_banco(comando_inserir)
         print("Medicamento cadastrado com sucesso!\n")
         input("Pressione ENTER para continuar...")
          
@@ -58,10 +52,8 @@ class Medicamento:
             print("Insira o nome do medicamento a ser procurado:")
             nome_med = input()
             
+            #comando sql ####################################################
             consulta_sql = f"SELECT * FROM Medicamento WHERE nome = '{nome_med}'"
-            cursor = self.connection.cursor()
-            cursor.execute(consulta_sql)
-            linhas = cursor.fetchall()
             
 
         elif opcao == "2": #faixa de valor
@@ -71,10 +63,8 @@ class Medicamento:
             print("Insira o valor máximo que o medicamento procurado pode ter:")
             valor_max = input()
             
+            #comando sql ####################################################
             consulta_sql = f"SELECT * FROM Medicamento WHERE preco >= {valor_min} AND preco <= {valor_max};"
-            cursor = self.connection.cursor()
-            cursor.execute(consulta_sql)
-            linhas = cursor.fetchall()
             
 
         elif opcao == "3":  #categoria
@@ -83,42 +73,43 @@ class Medicamento:
             print("1- Anti-inflamatorios\n2- Calmantes\n3- Pressao alta\n4- Gastrite\n5- Colesterol\n6- Anti-alergicos\n7- Antidepressivos\n 8-Outros")
             categoria_prod = input()
             
+            #comando sql ####################################################
             consulta_sql = f"SELECT * FROM Medicamentos WHERE categoria = '{categoria_prod}'"
-            cursor = self.connection.cursor()
-            cursor.execute(consulta_sql)
-            linhas = cursor.fetchall()
-            
-            
     
         elif opcao == "4":   #produzido por mari 
             
             print("Produtos produzidos por mari:")
             
+            #comando sql ####################################################
             consulta_sql = f"SELECT * FROM Medicamentos WHERE producao_mari = True"
-            cursor = self.connection.cursor()
-            cursor.execute(consulta_sql)
-            linhas = cursor.fetchall()
             
-        elif (opcao == '5'):  #essa opcao so pode ser feita por um funcionario
             
-            consulta_sql = f"SELECT M.*, E.Quantidade FROM Medicamento M JOIN Estoque E ON M.codigo_med = E.codigo_med WHERE E.Quantidade < 5;"
-            cursor = self.connection.cursor()
-            cursor.execute(consulta_sql)
-            linhas = cursor.fetchall()
-            
-        cursor.close()
-        self.connection.commit()
-        input("Pressione ENTER para continuar...")    
+        retorno = self.gerencia.acessa_banco(consulta_sql)
         
-        if len(linhas) == 0: 
+        if retorno == 0: 
             print('alguma coisa deu errado ou nao possui dados')
         else:
-            for linha in linhas:
+            for linha in retorno:
                print(linha)
 
+        input("Pressione ENTER para continuar...")    
         
             
             
-       
+    def procurar_menos_5unid(self):
+            
+        consulta_sql = f"SELECT M.*, E.Quantidade FROM Medicamento M JOIN Estoque E ON M.codigo_med = E.codigo_med WHERE E.Quantidade < 5;"
+            
+        retorno = self.gerencia.acessa_banco(consulta_sql)
+        
+        if retorno == 0: 
+            print('alguma coisa deu errado ou nao possui dados')
+        else:
+            for linha in retorno:
+               print(linha)
+
+        input("Pressione ENTER para continuar...")    
+        
+        
             
         

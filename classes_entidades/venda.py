@@ -1,23 +1,21 @@
 import time
+from gerencia_sql import Gerenciamento
 from datetime import datetime
 from datetime import date
 
 class Venda:
-    # Variável de classe
-    connection = None
 
     # Método construtor
     def __init__(self, conexao):
-        self.connection = conexao
-        pass
+        self.gerencia = Gerenciamento(conexao)
     
     def registrar_venda(self):
         
         print("CPF do funcionario responsável pela venda: ")
-        cod_venda = input()
+        cpf_func = input()
         
         print("CPF do cliente: ")
-        cod_venda = input()
+        cpf_cli = input()
         
         print("Código da venda realizada: ")
         cod_venda = input()
@@ -34,4 +32,11 @@ class Venda:
         print("Status de confirmacao da compra: finalizada/ em andamento")
         status_venda = input()
         
+        #comando para o sql###############################################
+        comando_inserir = f"INSERT INTO Venda (cpf_funcionario, cpf_cliente, codigo_venda, data, valor_total, pagamento, status) VALUES \
+                          ('{cpf_func}', '{cpf_cli}', '{cod_venda}', '{data_venda}',\
+                          {valor_venda}, '{forma_pagamento}', '{status_venda}')"
+
+        self.gerencia.acessa_banco(comando_inserir)   
+        ################################################################     
         

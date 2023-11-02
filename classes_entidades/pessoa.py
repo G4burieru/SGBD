@@ -4,14 +4,10 @@ from datetime import datetime
 from datetime import date
 
 class Pessoa:
-    # Variável de classe
-    connection = None
 
     # Método construtor
     def __init__(self, conexao):
-        self.connection = conexao
         self.gerencia = Gerenciamento(conexao)
-        pass
 
     # Método para imprimir informações da pessoa
     def inserir_pessoa(self):
@@ -68,12 +64,13 @@ class Pessoa:
         else:
             tipo_pessoa = "Funcionario"
 
-        ##############################################################3
+        #comando SQL #############################################################
         comando_inserir = f"INSERT INTO Pessoa (cpf, nome, email, data_nascimento, estado, cidade, bairro, rua, numero, tipo_pessoa) VALUES \
                           ('{str(cpf)}', '{nome}', '{email}', '{str(data_nascimento[0])}-{str(data_nascimento[1])}-{str(data_nascimento[2])}',\
                           '{estado}', '{cidade}', '{bairro}', '{rua}', {str(numero)}, '{tipo_pessoa}')"
 
         self.gerencia.acessa_banco(comando_inserir)
+        ##########################################################################
         
         print("Pessoa inserida com sucesso!\n")
         input("Pressione ENTER para continuar...")
