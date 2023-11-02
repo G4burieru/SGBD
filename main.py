@@ -112,18 +112,18 @@ if conexao.is_connected():
 
     # Defina a consulta SQL para criar uma tabela (substitua os campos e tipos de dados conforme necessário)
     criar_tabela_sql = """
-    CREATE TABLE IF NOT EXISTS Pessoa (
-        CPF varchar(11) PRIMARY KEY,
-        email VARCHAR(255) NOT NULL,
+    CREATE TABLE IF NOT EXISTS Medicamento (
+        cod_medicamento INT PRIMARY KEY,
         nome VARCHAR(255) NOT NULL,
-        tipo_pessoa VARCHAR(255) NOT NULL,
-        data_nascimento DATE NOT NULL,
-        cadastro_ativo BOOLEAN NOT NULL
+        valor DOUBLE(5,2) NOT NULL,
+        descricao VARCHAR(512) NOT NULL,
+        classificacao VARCHAR(255) NOT NULL,
+        quantidade INT NOT NULL
      )
     """
 
     deletar_tabela_sql = """
-    DROP TABLE Pessoa
+    DROP TABLE Medicamento
     """
 
     # Execute a consulta SQL para deletar a tabela
