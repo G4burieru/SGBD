@@ -58,6 +58,10 @@ class Medicamento:
          
     def filtrar_medicamento(self, opcao):
         
+        print("Escolha a opcao de filtro que você quer usar:")
+        print("1- Nome \n2- Faixa de preço\n3- Categoria\n4- Produzidos por Mari")
+        opcao = input()
+        
         if opcao == "1":  #nome
             
             print("Insira o nome do medicamento a ser procurado:")
@@ -75,17 +79,18 @@ class Medicamento:
             valor_max = input()
             
             #comando sql ####################################################
-            consulta_sql = f"SELECT * FROM Medicamento WHERE preco >= {valor_min} AND preco <= {valor_max};"
+            consulta_sql = f"SELECT * FROM Medicamento WHERE valor >= {valor_min} AND valor <= {valor_max};"
             
 
         elif opcao == "3":  #categoria
             
             print("Qual categoria do medicamento que voce quer procurar:")
             print("1- Anti-inflamatorios\n2- Calmantes\n3- Pressao alta\n4- Gastrite\n5- Colesterol\n6- Anti-alergicos\n7- Antidepressivos\n 8-Outros")
+            array_classificacao = ['Anti-inflamatorio', 'Calmantes', 'Pressao alta', 'Gastrite', 'Colesterol', 'Anti-alergicos', 'Antidepressivos', 'Outros']
             categoria_prod = input()
             
             #comando sql ####################################################
-            consulta_sql = f"SELECT * FROM Medicamentos WHERE categoria = '{categoria_prod}'"
+            consulta_sql = f"SELECT * FROM Medicamento WHERE categoria = '{array_classificacao[int(categoria_prod)-1]}'"
     
         elif opcao == "4":   #produzido por mari 
             
@@ -94,20 +99,32 @@ class Medicamento:
             #comando sql ####################################################
             consulta_sql = f"SELECT * FROM Medicamentos WHERE producao_mari = True"
             
+        else:
+            print("Opcão inválida")
+            time.sleep(2)
+            return 0
             
         retorno = self.gerencia.acessa_banco(consulta_sql)
         
-        if retorno == 0: 
-            print('alguma coisa deu errado ou nao possui dados')
-        else:
+        if(retorno == 0):
+            print("Não temos produto com esse filtro disponível")
+            time.sleep(2)
+        else: 
             for linha in retorno:
-               print(linha)   
-        
+                print("NOME:", linha[1])
+                print("VALOR: ", linha[2])
+                print("CATEGORIA:", linha[3])
+                print("PRODUZIDO P/ MARI: ", linha[4])
+                print("ESTOQUE: ",linha[5])
+                print("CÓDIGO: ", linha[0])
+                print("")
             
+            return 1
+        
             
     def procurar_menos_5unid(self):
             
-        consulta_sql = f"SELECT M.*, E.Quantidade FROM Medicamento M JOIN Estoque E ON M.codigo_med = E.codigo_med WHERE E.Quantidade < 5;"
+        consulta_sql = f"SELECT * FROM Medicamento WHERE quantidade < 5;"
             
         retorno = self.gerencia.acessa_banco(consulta_sql)
         

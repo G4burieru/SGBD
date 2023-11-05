@@ -4,6 +4,7 @@ import time
 from classes_entidades.pessoa import Pessoa
 from classes_entidades.medicamento import Medicamento
 from classes_entidades.carrinho import Venda_itens
+from classes_entidades.venda import Venda
 import termcolor
 from termcolor import colored
 
@@ -14,84 +15,36 @@ def limpar_tela():
         os.system('clear')
     else:
         os.system('cls')
-
-def filtrar_produtos():
-
-    while(1):    
-        print("Escolha a opcao de filtro que você quer usar:")
-        print("1-Nome \n2- Faixa de preço\n3- Categoria\n4- Produzidos por Mari")
-        opcao = input()
-        while(1):
-            med.filtrar_medicamento(opcao)
-            filtrar_dnv = input("Pressione '1' para filtrar novamente ou '0' para sair") 
-            
-            if(filtrar_dnv == 1):
-                limpar_tela()
-                break
-            else:
-                limpar_tela()
-                return 0;
         
 
         
 def menu_principal():
     
     while (1):
-        print(colored("BEM VINDO A", "green", attrs=["bold"]), colored("FARMACIA", "red", attrs=["bold"]), colored("!\nSELECIONE A OPCAO DESEJADA\n", "green", attrs=["bold"]))
-        print(colored("1- Ver produtos", "red"))
-        print(colored("2- Gerenciar cadastros", "red"))
-        print(colored("3- Entrar em conta existente", "red"))
+        print(colored("BEM VINDO A", "blue", attrs=["bold"]), colored("FARMACIA", "blue", attrs=["bold"]), colored("!\nSELECIONE A OPCAO DESEJADA\n", "blue", attrs=["bold"]))
+        print(colored("1- Ver produtos/Fazer compra", "red"))
+        print(colored("2- Area do funcionario", "red"))
+        print(colored("3- Area do cliente", "red"))
         print(colored("0- Sair", "red"))
         opcao_principal = input()
         
         
         if(opcao_principal == '1'):
-            carrinho = Venda_itens(conexao)
-            limpar_tela()
-            
-            print("-----------------------------------Produtos disponíveis-----------------------------------\n")
-            med.listar_todos_med()
-            print("\nO que você deseja: [0] Adicionar item ao carrinho     [1] Ver carrinho      [2] Finalizar compra    [3] Voltar ao menu")
-            while(1):
-                op= input()
-                
-                if(op == '0'):
-                    carrinho.adicionar_ao_carrinho()
-                    
-                elif(op == '1'):
-                    limpar_tela()
-                    carrinho.ver_carrinho()
-                    
-                elif(op == '2'):
-                    limpar_tela()
-                    print("cliente vai ser redirecirecionado a finalizar compra")
-                
-                elif(op == '3'):
-                    break
-                
-                if(op == '0' or op == '1'):
-                    print("-----------------------------------Produtos disponíveis-----------------------------------\n")
-                    med.listar_todos_med()
-                    print("\nO que você deseja: [0] Adicionar item ao carrinho     [1] Ver carrinho      [2] Finalizar compra    [3] Voltar ao menu")
+            menu_ver_prod()
                     
             
         elif(opcao_principal == '2'):
-            print("faz cadastro de cliente e funcionario")
-            logado = pessoa.tenta_login()
-            if(logado == 1):
-                menu_pessoa()
-            else:
-                print("sem sucesso")
+            area_funcionario()
             
         elif(opcao_principal == '3'):
             pessoa.area_cliente()
-            time.sleep(2)
         
         elif(opcao_principal == '0'):
             print("Sistema encerrado.")
             time.sleep(2)
             limpar_tela()
             break
+        
         else:
             print("Opção inválida")
             time.sleep(2)
@@ -99,6 +52,55 @@ def menu_principal():
         limpar_tela()
                     
         
+
+def menu_ver_prod():
+    limpar_tela()
+    
+    print("-----------------------------------Produtos disponíveis-----------------------------------\n")
+    med.listar_todos_med()
+    print("\nO que você deseja: [0] Filtrar produtos    [1] Adicionar item ao carrinho    [2] Ver carrinho    [3] Finalizar compra    [4]Retirar filtro    [5]Voltar")
+    
+    quis_filtrar = 0
+    while(1):
+        op= input()
+        
+        if(op == '0'):
+            quis_filtrar = 1
+            limpar_tela()
+            
+            retorno = med.filtrar_medicamento()
+            if(retorno == 0):
+                quis_filtrar = 0
+            
+        elif(op == '1'):
+            carrinho.adicionar_ao_carrinho()
+        
+        elif(op == '2'):
+            quis_filtrar = 0
+            limpar_tela()
+            carrinho.ver_carrinho()
+        
+            
+        elif(op == '3'):
+            quis_filtrar = 0
+            limpar_tela()
+            total = carrinho.subtotal_carrinho()
+            cod_compra = venda.registrar_venda(total)
+            carrinho.cadastrar_carrinho(cod_compra)
+            time.sleep(2)
+
+        elif(op == '4'):
+            quis_filtrar = 0
+        
+        elif(op == '5'):
+            break
+            
+        if(quis_filtrar == 0):
+            limpar_tela()
+            print("-----------------------------------Produtos disponíveis-----------------------------------\n")
+            med.listar_todos_med()
+            print("\nO que você deseja: [0] Filtrar produtos    [1] Adicionar item ao carrinho    [2] Ver carrinho    [3] Finalizar compra    [4]Retirar filtro    [5]Voltar")
+
 
 def menu_pessoa():
 
@@ -141,6 +143,48 @@ def menu_pessoa():
             time.sleep(2)
 
         limpar_tela()
+        
+def area_funcionario(self):
+    print("Area do funcionario")
+    logado = pessoa.tenta_login()
+    if(logado == 1):
+        while(1):
+            print(colored("1 - Gerenciar vendas\n2 - Gerenciar estoque\n3 - Gerenciar cadastros\n0 - Sair", "red"))
+            opcao = input()
+            if(opcao == '1'):
+                venda.gerenciar_vendas()
+            elif(opcao == '2'):
+                gerenciar_estoque()
+            elif(opcao == '3'):
+                menu_pessoa()
+            elif(opcao == '0'):
+                break
+            else:
+                print("Opção inválida")
+                time.sleep(2)
+        
+    limpar_tela()
+
+def gerenciar_estoque(self):
+
+    print(colored("1 - Cadastrar estoque\n2 - Filtrar produtos com menos de 5 unidades \n3 - Outras opcões de filtro\n0 - Sair", "red"))
+    while(1):
+        opcao = input()
+        
+        if (opcao == '1'): 
+            med.cadastrar_medicamento()
+        elif (opcao == '2'): 
+            med.procurar_menos_5unid()
+        elif(opcao == '3'):
+            med.filtrar_medicamento()
+        elif(opcao == '0'):
+            return 0
+        else: 
+            print("Opção inválida")
+            time.sleep(2)
+        
+        
+
 
 
 # Configurações de conexão
@@ -167,23 +211,31 @@ if conexao.is_connected():
     #variaveis globais
     med = Medicamento(conexao)
     pessoa = Pessoa(conexao)
+    venda = Venda(conexao)
+    carrinho = Venda_itens(conexao)
 
     # Defina a consulta SQL para criar uma tabela (substitua os campos e tipos de dados conforme necessário)
     criar_tabela_sql = """
-    CREATE TABLE IF NOT EXISTS Carrinho (
-        cod_medicamento INT PRIMARY KEY,
-        cod_venda INT NOT NULL,
-        quantidade INT NOT NULL
+    CREATE TABLE IF NOT EXISTS Venda (
+        cod_venda INT PRIMARY KEY,
+        cpf_funcionario varchar(11) NOT NULL,
+        cpf_cliente varchar(11) NOT NULL,
+        data_venda DATE NOT NULL,
+        valor_total DECIMAL(10,2) NOT NULL,
+        valor_com_desconto DECIMAL(10,2) NOT NULL,
+        forma_pagamento varchar(20) NOT NULL,
+        status varchar(20) NOT NULL
      )
     """
 
     deletar_tabela_sql = """
-    DROP TABLE Carrinho
+    DROP TABLE Venda
     """
     
     deletar_algo = """
     Delete FROM Pessoa, Endereco USING Pessoa INNER JOIN Endereco WHERE Pessoa.CPF = Endereco.CPF AND Pessoa.CPF='71652821490';
     """
+
 
     # Execute a consulta SQL para deletar a tabela
     # cursor.execute(deletar_tabela_sql)

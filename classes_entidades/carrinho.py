@@ -31,9 +31,9 @@ class Venda_itens:
                 contador+1
                             
             
-            qtd_med = input("Qual a quantidade do item que você deseja adicionar ao carrinho?")
+            qtd_med = input("Qual a quantidade do item que você deseja adicionar ao carrinho? ")
             qtd_med = int(qtd_med)
-            consulta_sql = f"SELECT quantidade FROM Medicamento WHERE cod_medicamento = {cod_med}"
+            consulta_sql = f"SELECT quantidade FROM Medicamento WHERE cod_medicamento = {int(cod_med)}"
             quantidade_disp = self.gerencia.acessa_banco(consulta_sql)
             
             if(existe_no_carrinho == -1):
@@ -56,7 +56,6 @@ class Venda_itens:
             
         input("Item adicionado! Pressione ENTER para continuar...")
 
-
     def ver_carrinho(self):
         
         if len(self.carrinho) == 0:
@@ -74,34 +73,35 @@ class Venda_itens:
             
         input("Pressione ENTER para continuar...")
     
-    def cadastrar_itens_venda(self):
+    def cadastrar_carrinho(self, cod_venda):
         
-        print("Codigo da venda: ")
-        cod_venda = input()
+        for item in self.carrinho:
+            
+            cod_item = item[0]
+            qtd_item = item[1]
         
-        print("Codigo do medicamento: ")
-        cod_med = input()
-
-        print("Quantidade: ")
-        qtd_med = input()
-        
-        comando_inserir = f"INSERT INTO Carrinho (codigo_venda, codigo_med, quantidade) VALUES \
-                          ('{cod_venda}', '{cod_med}', {qtd_med})"
+            comando_inserir = f"INSERT INTO Carrinho (cod_venda, cod_medicamento, quantidade) VALUES \
+                            ({int(cod_venda)}, '{cod_item}', {qtd_item})"
                           
-        self.gerencia.acessa_banco(comando_inserir)
+            self.gerencia.acessa_banco(comando_inserir)         #insere o item na tabela de carrinho
+            
+            consulta_sql = f"SELECT quantidade FROM Medicamento WHERE cod_medicamento = {cod_item}"
+            quantidade_disp = self.gerencia.acessa_banco(consulta_sql)
+            quantidade_nova = int(quantidade_disp[0][0]) - int(qtd_item)
+            atualiza_estoque = f"UPDATE Medicamento SET quantidade = {quantidade_nova} WHERE cod_medicamento = '{cod_item}';"
                           
+            self.gerencia.acessa_banco(atualiza_estoque)    #atualiza o estoque de medicamentos, sabendo que o item foi comprado
+            
+    def subtotal_carrinho(self): 
         
-    def recuperar_itens_venda(self, cod_venda):
+        valor_total = 0
         
-        consulta_sql = f"SELECT I.*, M.nome, M.preco, M.categoria, M.classificacao FROM Carrinho I JOIN Medicamento M \
-                        ON I.cod_med = M.CodigoMedicamento WHERE I.cod_med = '{cod_venda}';"
-        
-        retorno = self.gerencia.acessa_banco(consulta_sql)
-        
-        if retorno == 0: 
-            print('alguma coisa deu errado ou nao possui dados')
-        else:
-            for linha in retorno:
-               print(linha)
+        for item in self.carrinho: 
+            consulta_sql = f"SELECT valor from Medicamento WHERE cod_medicamento = {int(item[0])}" 
+            valor_unid = self.gerencia.acessa_banco(consulta_sql)
+            valor_total += int(item[1]) * float(valor_unid[0][0])
+            
+        return valor_total
+                          
         
                 

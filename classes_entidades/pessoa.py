@@ -512,8 +512,22 @@ class Pessoa:
                             self.limpar_tela()
                             
                         elif(opcao == '2'):
-                            pass
-                            
+                            consulta_sql = f"SELECT * FROM Venda WHERE cpf_cliente = '{cpf}'"
+                            retorno = self.gerencia.acessa_banco(consulta_sql)
+                            for linha in retorno:
+                                print("codigo da venda:", linha[0])
+                                print("data da venda:", linha[3])
+                                print("valor total:", linha[5])
+                                print("forma de pagamento:", linha[6])
+                                print("status da venda:", linha[7])
+
+                                consulta_sql = f"SELECT M.nome, C.quantidade FROM Carrinho C, Medicamento M WHERE C.cod_venda = '{linha[0]}' AND C.cod_medicamento = M.cod_medicamento"
+                                itens = self.gerencia.acessa_banco(consulta_sql)
+                                for linha in itens:
+                                    print("Medicamento:", linha[0], "quantidade:", linha[1])
+                                    
+                            input("Pressione ENTER para continuar...")
+                            self.limpar_tela()
                             
                         elif (opcao == '3'):
                             break
