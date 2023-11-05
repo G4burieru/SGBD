@@ -2,6 +2,8 @@ import mysql.connector
 import os
 import time
 from classes_entidades.pessoa import Pessoa
+from classes_entidades.medicamento import Medicamento
+from classes_entidades.funcionario import Funcionario
 import termcolor
 from termcolor import colored
 
@@ -12,7 +14,25 @@ def limpar_tela():
         os.system('clear')
     else:
         os.system('cls')
+
+def filtrar_produtos():
+
+    while(1):    
+        print("Escolha a opcao de filtro que você quer usar:")
+        print("1-Nome \n2- Faixa de preço\n3- Categoria\n4- Produzidos por Mari")
+        opcao = input()
+        while(1):
+            med.filtrar_medicamento(opcao)
+            filtrar_dnv = input("Pressione '1' para filtrar novamente ou '0' para sair") 
+            
+            if(filtrar_dnv == 1):
+                limpar_tela()
+                break
+            else:
+                limpar_tela()
+                return 0;
         
+
         
 def menu_principal():
     
@@ -24,18 +44,46 @@ def menu_principal():
         print(colored("0- Sair", "red"))
         opcao_principal = input()
         
+        
         if(opcao_principal == '1'):
-            print("aqui deveria ver os produtos")
-            time.sleep(2)
+            limpar_tela()
             
-        elif(opcao_principal == '2'):
+            print("Produtos disponíveis: \n")
+            med.listar_todos_med()
+            
+            print("\n\nO que deseja fazer?")
+            print("1-  Filtrar produtos      2- Comprar e não possuo cadastro      3- Comprar e possuo cadastro      0- Voltar")
+           
+            while(1):
+                menu_ver = input()
+                
+                if(menu_ver == 0):
+                    break
+                elif(menu_ver == 1):
+                    limpar_tela()
+                    filtrar_produtos(med)
+                    break
+                elif(menu_ver == 2):
+                    opcao_principal = 2
+                    break
+                elif(menu_ver == 3):
+                    opcao_principal = 3
+                    break
+            
+        if(opcao_principal == '2'):
+            print("faz cadastro de cliente e funcionario")
             menu_pessoa()
             
-        elif(opcao_principal == '3'):
-            print("so fazer login: funcionario/cliente")
+        if(opcao_principal == '3'):
+            #funcionario
+            retorno = func.tenta_login()
+            if(retorno == -1):
+                print("sem sucesso")
+            
+            print("se for cliente deve poder listar seus dados e pedidos")
             time.sleep(2)
         
-        elif(opcao_principal == '0'):
+        if(opcao_principal == '0'):
             print("Sistema encerrado.")
             time.sleep(2)
             break
@@ -95,6 +143,10 @@ host = "aws.connect.psdb.cloud"
 usuario = "0qlu6gn8jx2b99ls14um"
 senha = "pscale_pw_25n9ZWqX4wE0tktkqU3KRDoRn8nQj5EHwHL9HMqzOy"
 banco_de_dados = "farmacia"
+
+#variaveis globais
+med = Medicamento()
+func = Funcionario()
 
 # Conectar ao banco de dados
 print("Conectando...")

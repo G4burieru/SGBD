@@ -32,20 +32,28 @@ class Medicamento:
         print("1- Anti-inflamatorios\n2- Calmantes\n3- Pressao alta\n4- Gastrite\n5- Colesterol\n6- Anti-alergicos\n7- Antidepressivos\n 8-Outros")
         cat_med = input()
         
-        print("Insira a classificação do medicamento a ser cadastrado:")
-        classif_med = input()
         
-        print("A producao do medicamento é feita por Mari? (sim/nao)")
+        print("A producao do medicamento é feita por Mari?")
+        print("0 - Não             1- Sim")
         prod_mari = input()
         
-        comando_inserir = f"INSERT INTO Medicamento (codigo, nome, valor, categoria, classificacao, producao_mari) VALUES \
-                          ('{codigo_med}', '{nome_med}', '{valor_med}', '{cat_med}', '{classif_med}', '{prod_mari}')"
+        if(prod_mari == 0):
+            prod_mari = 'Sim'
+        else:
+            prod_mari = 'Não'
+        
+        print("Quantidade do medicamento a ser cadastrado no estoque: ")     
+        qtd_med = input();
+        qtd_med = int(qtd_med)
+        
+        comando_inserir = f"INSERT INTO Medicamento (codigo, nome, valor, categoria, producao_mari, estoque) VALUES \
+                          ('{codigo_med}', '{nome_med}', '{valor_med}', '{cat_med}', '{prod_mari}', {qtd_med})"
 
         self.gerencia.acessa_banco(comando_inserir)
         print("Medicamento cadastrado com sucesso!\n")
         input("Pressione ENTER para continuar...")
          
-    def procurar_medicamento(self, opcao):
+    def filtrar_medicamento(self, opcao):
         
         if opcao == "1":  #nome
             
@@ -90,9 +98,7 @@ class Medicamento:
             print('alguma coisa deu errado ou nao possui dados')
         else:
             for linha in retorno:
-               print(linha)
-
-        input("Pressione ENTER para continuar...")    
+               print(linha)   
         
             
             
@@ -109,6 +115,24 @@ class Medicamento:
                print(linha)
 
         input("Pressione ENTER para continuar...")    
+        
+    
+    def listar_todos_med(self):
+        
+        consulta_sql = "SELECT * FROM Medicamento WHERE estoque > 0"
+
+        linhas = self.gerencia.acessa_banco(consulta_sql)
+        
+        for linha in linhas:
+            print("nome:", linha[1])
+            print("valor:", linha[2])
+            print("categoria:", linha[3])
+            print("produzido por Mari:", linha[4])
+            print("estoque:", linha[5])
+            print("codigo:", linha[0])
+            print("\n")
+            
+        time.sleep(3)
         
         
             
