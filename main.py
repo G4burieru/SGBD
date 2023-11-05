@@ -3,7 +3,6 @@ import os
 import time
 from classes_entidades.pessoa import Pessoa
 from classes_entidades.medicamento import Medicamento
-from classes_entidades.funcionario import Funcionario
 import termcolor
 from termcolor import colored
 
@@ -79,17 +78,13 @@ def menu_principal():
                 print("sem sucesso")
             
         if(opcao_principal == '3'):
-            #funcionario
-            retorno = func.tenta_login()
-            if(retorno == -1):
-                print("sem sucesso")
-            
-            print("se for cliente deve poder listar seus dados e pedidos")
+            pessoa.area_cliente()
             time.sleep(2)
         
         if(opcao_principal == '0'):
             print("Sistema encerrado.")
             time.sleep(2)
+            limpar_tela()
             break
         else:
             print("Opção inválida")
@@ -104,7 +99,7 @@ def menu_pessoa():
     while (1):
         limpar_tela()
         print(colored("1 - Inserir pessoa\n2 - Ver todas pessoas cadastradas\n3 - Excluir pessoa\n4 - Pesquisar por nome\
-                       \n5 - Editar pessoa\n6 - Exibir uma pessoa\n7 - Gerar relatório\n0 - Sair\n", "red"))
+                       \n5 - Editar pessoa\n6 - Pesquisar por CPF\n7 - Gerar relatório\n0 - Sair\n", "red"))
         opcao = input()
 
         if opcao == "1":
@@ -132,6 +127,7 @@ def menu_pessoa():
         elif opcao == "0":
             print("Saindo...")
             time.sleep(1)
+            limpar_tela()
             break
 
         else:
@@ -164,7 +160,6 @@ if conexao.is_connected():
     
     #variaveis globais
     med = Medicamento(conexao)
-    func = Funcionario(conexao)
     pessoa = Pessoa(conexao)
 
     # Defina a consulta SQL para criar uma tabela (substitua os campos e tipos de dados conforme necessário)

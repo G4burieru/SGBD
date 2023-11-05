@@ -2,12 +2,19 @@ import time
 from gerencia_sql import Gerenciamento
 from datetime import datetime
 from datetime import date
+import os
 
 class Pessoa:
 
     # Método construtor
     def __init__(self, conexao):
         self.gerencia = Gerenciamento(conexao)
+        
+    def limpar_tela():
+        if os.name == 'posix':
+            os.system('clear')
+        else:
+            os.system('cls')
 
     # Método para imprimir informações da pessoa
     def inserir_pessoa(self):
@@ -211,10 +218,13 @@ class Pessoa:
             print('Alteração realizada com sucesso!')
             time.sleep(3)
 
-    def exibir_um(self):
-
-        print("Digite o CPF da pessoa que você deseja exibir: ")
-        cpf_procurado = self.input_numerica()
+    def exibir_um(self, cpf_input = 0):
+        if(cpf_input == 0):
+            print("Digite o CPF da pessoa que você deseja exibir: ")
+            cpf_procurado = self.input_numerica()
+            
+        else:
+            cpf_procurado = cpf_input
 
         consulta_sql = "SELECT P.CPF, P.nome, P.email, P.data_nascimento, E.estado, E.cidade, \
         E.bairro, E.rua, E.numero, P.tipo_pessoa, P.cadastro_ativo FROM Pessoa P, Endereco E WHERE P.cpf = E.cpf AND P.CPF = " + cpf_procurado  # procurando o cpf
@@ -476,3 +486,34 @@ class Pessoa:
                 return 1
         
         return -1
+    
+    def area_cliente(self):
+            
+            cpf = input("Digite seu CPF:")
+            
+            consulta_sql = f"SELECT * FROM Pessoa WHERE cpf = '{cpf}'"
+            retorno = self.gerencia.acessa_banco(consulta_sql)
+            
+            if (retorno == 0):
+                print("CPF inexistente")
+                return -1
+            else:
+                consulta_sql = f"SELECT * FROM Cliente WHERE cpf = '{cpf}'"
+                retorno = self.gerencia.acessa_banco(consulta_sql)
+                
+                if(retorno == 0):
+                    print("CPF não é de um cliente")
+                    return -1
+                else:
+                    while(1):
+                        opcao = input("O que deseja ver? [1] Dados cadastrais [2] Compras realizadas [3] Voltar ao menu\n")
+                        if (opcao == '1'):
+                            self.exibir_um(cpf)
+                            self.limpar_tela()
+                            
+                        elif (opcao == '3'):
+                            break
+                        
+                    
+                    
+            
