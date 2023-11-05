@@ -8,13 +8,13 @@ class Medicamento:
         self.gerencia = Gerenciamento(conexao)
         pass
     
-    def cadastrar_medicamento(self):
+    def cadastrar_medicamento(self):   #alterei
         
         print("Insira o código do medicamento a ser cadastrado:")
         codigo_med = input()
         
         #comando sql ####################################################
-        consulta_sql = f"SELECT * FROM Medicamento WHERE codigo = {codigo_med}"
+        consulta_sql = f"SELECT * FROM Medicamento WHERE cod_medicamento = {codigo_med}"
         retorno = self.gerencia.acessa_banco(consulta_sql)
         ###################################################3
 
@@ -27,10 +27,13 @@ class Medicamento:
         
         print("Insira o valor do medicamento a ser cadastrado:")
         valor_med = input()
+        valor_med = float(valor_med)
         
         print("Insira a categoria do medicamento a ser cadastrado:")
-        print("1- Anti-inflamatorios\n2- Calmantes\n3- Pressao alta\n4- Gastrite\n5- Colesterol\n6- Anti-alergicos\n7- Antidepressivos\n 8-Outros")
+        array_classificacao = ['Anti-inflamatorio', 'Calmantes', 'Pressao alta', 'Gastrite', 'Colesterol', 'Anti-alergicos', 'Antidepressivos', 'Outros']
+        print("1- Anti-inflamatorios\n2- Calmantes\n3- Pressao alta\n4- Gastrite\n5- Colesterol\n6- Anti-alergicos\n7- Antidepressivos\n8-Outros")
         cat_med = input()
+        cat_med = array_classificacao[int(cat_med)-1]
         
         
         print("A producao do medicamento é feita por Mari?")
@@ -46,8 +49,8 @@ class Medicamento:
         qtd_med = input();
         qtd_med = int(qtd_med)
         
-        comando_inserir = f"INSERT INTO Medicamento (codigo, nome, valor, categoria, producao_mari, estoque) VALUES \
-                          ('{codigo_med}', '{nome_med}', '{valor_med}', '{cat_med}', '{prod_mari}', {qtd_med})"
+        comando_inserir = f"INSERT INTO Medicamento (cod_medicamento, nome, valor, categoria, produzido_mari, quantidade) VALUES \
+                          ('{codigo_med}', '{nome_med}', {valor_med}, '{cat_med}', '{prod_mari}', {qtd_med})"
 
         self.gerencia.acessa_banco(comando_inserir)
         print("Medicamento cadastrado com sucesso!\n")
@@ -117,22 +120,25 @@ class Medicamento:
         input("Pressione ENTER para continuar...")    
         
     
-    def listar_todos_med(self):
+    def listar_todos_med(self):         #esta funcao foi alterada
         
-        consulta_sql = "SELECT * FROM Medicamento WHERE estoque > 0"
+        consulta_sql = "SELECT * FROM Medicamento WHERE quantidade > 0"
 
-        linhas = self.gerencia.acessa_banco(consulta_sql)
+        retorno = self.gerencia.acessa_banco(consulta_sql)
         
-        for linha in linhas:
-            print("nome:", linha[1])
-            print("valor:", linha[2])
-            print("categoria:", linha[3])
-            print("produzido por Mari:", linha[4])
-            print("estoque:", linha[5])
-            print("codigo:", linha[0])
-            print("\n")
+        if(retorno == 0): 
+            print("Não há nenhum medicamento disponível")
+        else:
+            for linha in retorno:
+                print("NOME:", linha[1])
+                print("VALOR: ", linha[2])
+                print("CATEGORIA:", linha[3])
+                print("PRODUZIDO P/ MARI: ", linha[4])
+                print("ESTOQUE: ",linha[5])
+                print("CÓDIGO: ", linha[0])
+                print("")
             
-        time.sleep(3)
+        time.sleep(1)
         
         
             
