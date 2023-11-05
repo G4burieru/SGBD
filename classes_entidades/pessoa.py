@@ -26,10 +26,21 @@ class Pessoa:
         consulta_sql = f"SELECT * FROM Pessoa WHERE cpf = {cpf}"
         retorno = self.gerencia.acessa_banco(consulta_sql)
         
+        verifica_cadastro_ativo = f"SELECT cadastro_ativo FROM Pessoa WHERE cpf = {cpf}"
+        cadastro_ativo = self.gerencia.acessa_banco(verifica_cadastro_ativo)
+        
         if(retorno != 0): #se o cpf foi encontrado no banco de dados
-            print("\nCPF já cadastrado no banco de dados! Retornando ao menu...\n")
-            time.sleep(3)
-            return -2
+            if(cadastro_ativo[0][0] == 0):
+                print("\nCPF já cadastrado no banco de dados! Reativando cadastro...\n")
+                consulta_sql = f"UPDATE Pessoa SET cadastro_ativo = 1 WHERE cpf = {cpf}"
+                self.gerencia.acessa_banco(consulta_sql)
+                time.sleep(3)
+                return -2
+
+            else:
+                print("\nCPF já cadastrado no banco de dados! Retornando ao menu...\n")
+                time.sleep(3)
+                return -2
 
         nome = input("Insira o nome:\n").lower()
         email = input("Insira o email:\n").lower()
@@ -63,6 +74,40 @@ class Pessoa:
             tipo_pessoa = "Cliente"
         else:
             tipo_pessoa = "Funcionario"
+            
+        if(tipo_pessoa == "Funcionario"):
+            print("Insira um login para o funcionário:")
+            login = input().lower()
+            print("Insira uma senha para o funcionário:")
+            senha = input().lower()
+            print("Insira o cargo do funcionário:")
+            cargo = input().lower()
+            
+        elif(tipo_pessoa == "Cliente"):
+            while (1):
+                ve_onepiece = input("O cliente ve one piece? - [1] Sim [2] Não\n")
+                if (ve_onepiece == '1' or ve_onepiece == '2'):
+                    break
+                else:
+                    print("Opcao invalida, tente novamente")
+                    
+            if(ve_onepiece == '1'):
+                ve_onepiece = 1
+            elif(ve_onepiece == '2'):
+                ve_onepiece = 0
+                
+            while (1):
+                is_flamengo = input("O cliente é flamenguista? - [1] Sim [2] Não\n")
+                if (is_flamengo == '1' or is_flamengo == '2'):
+                    break
+                else:
+                    print("Opcao invalida, tente novamente")
+                    
+            if(is_flamengo == '1'):
+                is_flamengo = 1
+            elif(is_flamengo == '2'):
+                is_flamengo = 0
+            
 
         #comando SQL #############################################################
         comando_inserir = f"INSERT INTO Pessoa (cpf, nome, email, data_nascimento, tipo_pessoa, cadastro_ativo) VALUES \
@@ -74,6 +119,18 @@ class Pessoa:
                           ('{str(cpf)}','{estado}', '{cidade}', '{bairro}', '{rua}', {str(numero)})"
                           
         self.gerencia.acessa_banco(comando_inserir)
+        
+        if(tipo_pessoa == "Funcionario"):
+            comando_inserir = f"INSERT INTO Funcionario (cpf, login, senha, tipo_funcionario) VALUES \
+                            ('{str(cpf)}','{login}', '{senha}', '{cargo}')"
+                            
+            self.gerencia.acessa_banco(comando_inserir)
+            
+        elif(tipo_pessoa == "Cliente"):
+            comando_inserir = f"INSERT INTO Cliente (cpf, ve_onepiece, is_flamengo) VALUES \
+                            ('{str(cpf)}',{ve_onepiece}, {is_flamengo})"
+                            
+            self.gerencia.acessa_banco(comando_inserir)
         ##########################################################################
         
         print("Pessoa inserida com sucesso!\n")
@@ -166,6 +223,7 @@ class Pessoa:
 
         if len(resultados) == 0:  # se não teve nenhum cpf encontrado, nao será possivel exibir
             print('CPF procurado não está cadastrado ou é inválido')
+            return -1
         else:
             for linha in resultados:
                 print("\ncpf:", linha[0])
@@ -179,6 +237,22 @@ class Pessoa:
                 print("numero:", linha[8])
                 print("cargo:", linha[9])
                 print("cadastro ativo:", bool(linha[10]))
+                
+        if(linha[9] == 'Cliente'):
+            consulta_sql = f"SELECT * FROM Cliente WHERE cpf = {cpf_procurado}"
+            resultados = self.gerencia.acessa_banco(consulta_sql)
+            for linha in resultados:
+                print("Vê One Piece:", bool(linha[1]))
+                print("É flamenguista:", bool(linha[2]))
+                print("\n")
+                
+        elif(linha[9] == 'Funcionario'):
+            consulta_sql = f"SELECT * FROM Funcionario WHERE cpf = {cpf_procurado}"
+            resultados = self.gerencia.acessa_banco(consulta_sql)
+            for linha in resultados:
+                print("Login:", linha[1])
+                print("Senha:", linha[2])
+                print("Cargo:", linha[3])
                 print("\n")
 
         input("Pressione ENTER para continuar...")
@@ -209,14 +283,11 @@ class Pessoa:
     def deletar_pessoa(self):
         print("Digite o CPF que deseja deletar: ")
         cpf = self.input_numerica()
-        consulta_sql = f'Delete FROM Pessoa, Endereco USING Pessoa INNER JOIN Endereco WHERE Pessoa.CPF = Endereco.CPF AND Pessoa.CPF={cpf};'
+        consulta_sql = f"UPDATE Pessoa SET cadastro_ativo = 0 WHERE cpf = '{cpf}';"
         
-        retorno = self.gerencia.acessa_banco(consulta_sql)
+        self.gerencia.acessa_banco(consulta_sql)
 
-        if retorno <= 0:
-            print("CPF procurado não está cadastrado ou é inválido")
-        else:  
-            print("Deletado com sucesso.")
+        print("Deletado com sucesso.")
         
         input("Pressione ENTER para continuar...\n")      
 
@@ -272,12 +343,26 @@ class Pessoa:
                     arquivo.write(f"numero: {linha[8]}\n")
                     arquivo.write(f"cargo: {linha[9]}\n")
                     
+                if(linha[9] == 'Cliente'):
+                    consulta_sql = f"SELECT * FROM Cliente WHERE cpf = {linha[0]}"
+                    resultados = self.gerencia.acessa_banco(consulta_sql)
+                    for linha in resultados:
+                        arquivo.write(f"Vê One Piece: {bool(linha[1])}\n")
+                        arquivo.write(f"É flamenguista: {bool(linha[2])}\n")
+                        
+                elif(linha[9] == 'Funcionario'):
+                    consulta_sql = f"SELECT * FROM Funcionario WHERE cpf = {linha[0]}"
+                    resultados = self.gerencia.acessa_banco(consulta_sql)
+                    for linha in resultados:
+                        arquivo.write(f"Login: {linha[1]}\n")
+                        arquivo.write(f"Senha: {linha[2]}\n")
+                        arquivo.write(f"Cargo: {linha[3]}\n")
+                    
                 print('Relatório gerado com sucesso!')
                 time.sleep(2)
         except IOError as e:
             print(f"Erro ao criar ou escrever no arquivo: {str(e)}")
 
-        
         
 
     def input_numerica(self):
@@ -370,3 +455,24 @@ class Pessoa:
             return False
 
         return True
+    
+    def tenta_login(self):
+        
+        login_teste = input("Digite seu login:")
+
+        consulta_sql = f"SELECT * FROM Funcionario WHERE login = '{login_teste}'"
+        retorno = self.gerencia.acessa_banco(consulta_sql)
+        
+        if (retorno == 0):
+            print("Login inexistente")
+        else:
+            senha_teste = input("Digite sua senha:")
+            consulta_sql = f"SELECT * FROM Funcionario WHERE senha = '{senha_teste}'"
+            retorno = self.gerencia.acessa_banco(consulta_sql)
+            
+            if(retorno == 0):
+                print("Senha incorreta")
+            else:
+                return 1
+        
+        return -1

@@ -72,7 +72,11 @@ def menu_principal():
             
         if(opcao_principal == '2'):
             print("faz cadastro de cliente e funcionario")
-            menu_pessoa()
+            logado = pessoa.tenta_login()
+            if(logado == 1):
+                menu_pessoa()
+            else:
+                print("sem sucesso")
             
         if(opcao_principal == '3'):
             #funcionario
@@ -102,29 +106,28 @@ def menu_pessoa():
         print(colored("1 - Inserir pessoa\n2 - Ver todas pessoas cadastradas\n3 - Excluir pessoa\n4 - Pesquisar por nome\
                        \n5 - Editar pessoa\n6 - Exibir uma pessoa\n7 - Gerar relatório\n0 - Sair\n", "red"))
         opcao = input()
-        pessoa1 = Pessoa(conexao)
 
         if opcao == "1":
-            pessoa1.inserir_pessoa()
+            pessoa.inserir_pessoa()
 
         elif opcao == "2":
-            pessoa1.exibir_todos()
+            pessoa.exibir_todos()
 
         elif opcao == "3":
-            pessoa1.deletar_pessoa() 
+            pessoa.deletar_pessoa() 
             
 
         elif opcao == "4":
-            pessoa1.procurar_nome()
+            pessoa.procurar_nome()
             
         elif opcao == "5":
-            pessoa1.editar_pessoa()
+            pessoa.editar_pessoa()
 
         elif opcao == "6":
-            pessoa1.exibir_um()
+            pessoa.exibir_um()
 
         elif opcao == "7":
-            pessoa1.gerar_relatorio()
+            pessoa.gerar_relatorio()
 
         elif opcao == "0":
             print("Saindo...")
@@ -144,9 +147,6 @@ usuario = "0qlu6gn8jx2b99ls14um"
 senha = "pscale_pw_25n9ZWqX4wE0tktkqU3KRDoRn8nQj5EHwHL9HMqzOy"
 banco_de_dados = "farmacia"
 
-#variaveis globais
-med = Medicamento()
-func = Funcionario()
 
 # Conectar ao banco de dados
 print("Conectando...")
@@ -161,21 +161,27 @@ conexao = mysql.connector.connect(
 if conexao.is_connected():
     print("Conectado ao banco de dados!")
     cursor = conexao.cursor()
+    
+    #variaveis globais
+    med = Medicamento(conexao)
+    func = Funcionario(conexao)
+    pessoa = Pessoa(conexao)
 
     # Defina a consulta SQL para criar uma tabela (substitua os campos e tipos de dados conforme necessário)
     criar_tabela_sql = """
-    CREATE TABLE IF NOT EXISTS Medicamento (
+    CREATE TABLE IF NOT EXISTS Carrinho (
         cod_medicamento INT PRIMARY KEY,
-        nome VARCHAR(255) NOT NULL,
-        valor DOUBLE(5,2) NOT NULL,
-        descricao VARCHAR(512) NOT NULL,
-        classificacao VARCHAR(255) NOT NULL,
+        cod_venda INT NOT NULL,
         quantidade INT NOT NULL
      )
     """
 
     deletar_tabela_sql = """
-    DROP TABLE Medicamento
+    DROP TABLE Carrinho
+    """
+    
+    deletar_algo = """
+    Delete FROM Pessoa, Endereco USING Pessoa INNER JOIN Endereco WHERE Pessoa.CPF = Endereco.CPF AND Pessoa.CPF='71652821490';
     """
 
     # Execute a consulta SQL para deletar a tabela
@@ -185,6 +191,8 @@ if conexao.is_connected():
     # Execute a consulta SQL para criar a tabela
     # cursor.execute(criar_tabela_sql)
     # print("Tabela criada com sucesso")
+    
+    # cursor.execute(deletar_algo)
 
     cursor.close()
     limpar_tela()
