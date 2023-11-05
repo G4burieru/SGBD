@@ -22,10 +22,10 @@ def menu_principal():
     
     while (1):
         print(colored("BEM VINDO A", "blue", attrs=["bold"]), colored("FARMACIA", "blue", attrs=["bold"]), colored("!\nSELECIONE A OPCAO DESEJADA\n", "blue", attrs=["bold"]))
-        print(colored("1- Ver produtos/Fazer compra", "red"))
-        print(colored("2- Area do funcionario", "red"))
-        print(colored("3- Area do cliente", "red"))
-        print(colored("0- Sair", "red"))
+        print(colored("1- Ver produtos/Fazer compra", "yellow"))
+        print(colored("2- Area do funcionario", "yellow"))
+        print(colored("3- Area do cliente", "yellow"))
+        print(colored("0- Sair", "yellow"))
         opcao_principal = input()
         
         
@@ -58,7 +58,7 @@ def menu_ver_prod():
     
     print("-----------------------------------Produtos disponíveis-----------------------------------\n")
     med.listar_todos_med()
-    print("\nO que você deseja: [0] Filtrar produtos    [1] Adicionar item ao carrinho    [2] Ver carrinho    [3] Finalizar compra    [4]Retirar filtro    [5]Voltar")
+    print("\nO que você deseja: [0] Filtrar produtos    [1] Adicionar item ao carrinho    [2] Ver carrinho    [3] Finalizar compra    [4] Retirar filtro    [5]Voltar")
     
     quis_filtrar = 0
     while(1):
@@ -69,25 +69,28 @@ def menu_ver_prod():
             limpar_tela()
             
             retorno = med.filtrar_medicamento()
-            if(retorno == 0):
+            if(retorno == 0):      #se não possuir a categoria selecionada, então nao há como
                 quis_filtrar = 0
             
         elif(op == '1'):
             carrinho.adicionar_ao_carrinho()
         
         elif(op == '2'):
-            quis_filtrar = 0
             limpar_tela()
             carrinho.ver_carrinho()
-        
             
         elif(op == '3'):
             quis_filtrar = 0
             limpar_tela()
-            total = carrinho.subtotal_carrinho()
-            cod_compra = venda.registrar_venda(total)
-            carrinho.cadastrar_carrinho(cod_compra)
-            time.sleep(2)
+            
+            if(carrinho.carrinho_vazio() == 1):
+                print("Carrinho vazio, não é possível finalizar compra")
+                time.sleep(2)
+            else:
+                total = carrinho.subtotal_carrinho()
+                cod_compra = venda.registrar_venda(total)
+                carrinho.cadastrar_carrinho(cod_compra)
+                time.sleep(2)
 
         elif(op == '4'):
             quis_filtrar = 0
@@ -100,6 +103,19 @@ def menu_ver_prod():
             print("-----------------------------------Produtos disponíveis-----------------------------------\n")
             med.listar_todos_med()
             print("\nO que você deseja: [0] Filtrar produtos    [1] Adicionar item ao carrinho    [2] Ver carrinho    [3] Finalizar compra    [4]Retirar filtro    [5]Voltar")
+        else:
+            limpar_tela()
+            print("-----------------------------------Produtos disponíveis (Filtrado)-----------------------------------\n")
+            for linha in retorno:
+                print("NOME:", linha[1])
+                print("VALOR: ", linha[2])
+                print("CATEGORIA:", linha[3])
+                print("PRODUZIDO P/ MARI: ", linha[4])
+                print("ESTOQUE: ",linha[5])
+                print("CÓDIGO: ", linha[0])
+                print("")
+            print("\nO que você deseja: [0] Filtrar produtos    [1] Adicionar item ao carrinho    [2] Ver carrinho    [3] Finalizar compra    [4]Retirar filtro    [5]Voltar")
+            
 
 
 def menu_pessoa():

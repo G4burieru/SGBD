@@ -56,7 +56,7 @@ class Medicamento:
         print("Medicamento cadastrado com sucesso!\n")
         input("Pressione ENTER para continuar...")
          
-    def filtrar_medicamento(self, opcao):
+    def filtrar_medicamento(self):
         
         print("Escolha a opcao de filtro que você quer usar:")
         print("1- Nome \n2- Faixa de preço\n3- Categoria\n4- Produzidos por Mari")
@@ -85,7 +85,7 @@ class Medicamento:
         elif opcao == "3":  #categoria
             
             print("Qual categoria do medicamento que voce quer procurar:")
-            print("1- Anti-inflamatorios\n2- Calmantes\n3- Pressao alta\n4- Gastrite\n5- Colesterol\n6- Anti-alergicos\n7- Antidepressivos\n 8-Outros")
+            print("1- Anti-inflamatorios\n2- Calmantes\n3- Pressao alta\n4- Gastrite\n5- Colesterol\n6- Anti-alergicos\n7- Antidepressivos\n8-Outros")
             array_classificacao = ['Anti-inflamatorio', 'Calmantes', 'Pressao alta', 'Gastrite', 'Colesterol', 'Anti-alergicos', 'Antidepressivos', 'Outros']
             categoria_prod = input()
             
@@ -97,7 +97,7 @@ class Medicamento:
             print("Produtos produzidos por mari:")
             
             #comando sql ####################################################
-            consulta_sql = f"SELECT * FROM Medicamentos WHERE producao_mari = True"
+            consulta_sql = f"SELECT * FROM Medicamento WHERE produzido_mari = 'Sim'"
             
         else:
             print("Opcão inválida")
@@ -109,17 +109,9 @@ class Medicamento:
         if(retorno == 0):
             print("Não temos produto com esse filtro disponível")
             time.sleep(2)
+            return 0
         else: 
-            for linha in retorno:
-                print("NOME:", linha[1])
-                print("VALOR: ", linha[2])
-                print("CATEGORIA:", linha[3])
-                print("PRODUZIDO P/ MARI: ", linha[4])
-                print("ESTOQUE: ",linha[5])
-                print("CÓDIGO: ", linha[0])
-                print("")
-            
-            return 1
+            return retorno
         
             
     def procurar_menos_5unid(self):
@@ -132,9 +124,7 @@ class Medicamento:
             print('alguma coisa deu errado ou nao possui dados')
         else:
             for linha in retorno:
-               print(linha)
-
-        input("Pressione ENTER para continuar...")    
+               print(linha) 
         
     
     def listar_todos_med(self):         #esta funcao foi alterada

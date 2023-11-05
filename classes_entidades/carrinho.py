@@ -103,5 +103,10 @@ class Venda_itens:
             
         return valor_total
                           
+    def carrinho_vazio(self):
         
+        if(len(self.carrinho) == 0):
+            return 1
+        else:
+            return 0
                 
