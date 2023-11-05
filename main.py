@@ -47,27 +47,15 @@ def menu_principal():
         if(opcao_principal == '1'):
             limpar_tela()
             
-            print("Produtos disponíveis: \n")
+            print("-----------------------------------Produtos disponíveis-----------------------------------\n")
             med.listar_todos_med()
-            
-            print("\n\nO que deseja fazer?")
-            print("1-  Filtrar produtos      2- Comprar e não possuo cadastro      3- Comprar e possuo cadastro      0- Voltar")
-           
+            print("\n\nGostaria de realizar uma compra? Volte ao menu principal e entre na opcao 'Fazer cadastro' ou 'Entrar em conta existente'")
+            print("Digite '1' para retornar ao menu principal:")
             while(1):
-                menu_ver = input()
+                sair= input()
                 
-                if(menu_ver == 0):
-                    break
-                elif(menu_ver == 1):
-                    limpar_tela()
-                    filtrar_produtos(med)
-                    break
-                elif(menu_ver == 2):
-                    opcao_principal = 2
-                    break
-                elif(menu_ver == 3):
-                    opcao_principal = 3
-                    break
+                if(sair == '1'):
+                    break;
             
         if(opcao_principal == '2'):
             print("faz cadastro de cliente e funcionario")
