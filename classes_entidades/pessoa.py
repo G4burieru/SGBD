@@ -511,6 +511,10 @@ class Pessoa:
                             self.exibir_um(cpf)
                             self.limpar_tela()
                             
+                        elif(opcao == '2'):
+                            pass
+                            
+                            
                         elif (opcao == '3'):
                             break
                         

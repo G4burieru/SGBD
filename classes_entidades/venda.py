@@ -38,5 +38,6 @@ class Venda:
                           {valor_venda}, '{forma_pagamento}', '{status_venda}')"
 
         self.gerencia.acessa_banco(comando_inserir)   
-        ################################################################     
+        ################################################################ 
+    
         

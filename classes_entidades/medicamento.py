@@ -137,8 +137,6 @@ class Medicamento:
                 print("ESTOQUE: ",linha[5])
                 print("CÓDIGO: ", linha[0])
                 print("")
-            
-        time.sleep(1)
         
         
             

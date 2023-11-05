@@ -3,6 +3,7 @@ import os
 import time
 from classes_entidades.pessoa import Pessoa
 from classes_entidades.medicamento import Medicamento
+from classes_entidades.carrinho import Venda_itens
 import termcolor
 from termcolor import colored
 
@@ -45,19 +46,36 @@ def menu_principal():
         
         
         if(opcao_principal == '1'):
+            carrinho = Venda_itens(conexao)
             limpar_tela()
             
             print("-----------------------------------Produtos disponíveis-----------------------------------\n")
             med.listar_todos_med()
-            print("\n\nGostaria de realizar uma compra? Volte ao menu principal e entre na opcao 'Fazer cadastro' ou 'Entrar em conta existente'")
-            print("Digite '1' para retornar ao menu principal:")
+            print("\nO que você deseja: [0] Adicionar item ao carrinho     [1] Ver carrinho      [2] Finalizar compra    [3] Voltar ao menu")
             while(1):
-                sair= input()
+                op= input()
                 
-                if(sair == '1'):
-                    break;
+                if(op == '0'):
+                    carrinho.adicionar_ao_carrinho()
+                    
+                elif(op == '1'):
+                    limpar_tela()
+                    carrinho.ver_carrinho()
+                    
+                elif(op == '2'):
+                    limpar_tela()
+                    print("cliente vai ser redirecirecionado a finalizar compra")
+                
+                elif(op == '3'):
+                    break
+                
+                if(op == '0' or op == '1'):
+                    print("-----------------------------------Produtos disponíveis-----------------------------------\n")
+                    med.listar_todos_med()
+                    print("\nO que você deseja: [0] Adicionar item ao carrinho     [1] Ver carrinho      [2] Finalizar compra    [3] Voltar ao menu")
+                    
             
-        if(opcao_principal == '2'):
+        elif(opcao_principal == '2'):
             print("faz cadastro de cliente e funcionario")
             logado = pessoa.tenta_login()
             if(logado == 1):
@@ -65,11 +83,11 @@ def menu_principal():
             else:
                 print("sem sucesso")
             
-        if(opcao_principal == '3'):
+        elif(opcao_principal == '3'):
             pessoa.area_cliente()
             time.sleep(2)
         
-        if(opcao_principal == '0'):
+        elif(opcao_principal == '0'):
             print("Sistema encerrado.")
             time.sleep(2)
             limpar_tela()
