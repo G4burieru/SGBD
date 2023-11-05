@@ -1,5 +1,10 @@
 import time
 from gerencia_sql import Gerenciamento
+from termcolor import colored
+
+TITLECOLOR = 'blue'
+TEXTCOLOR = 'yellow'
+
 
 class Venda_itens:
     
@@ -13,7 +18,7 @@ class Venda_itens:
         
         existe_no_carrinho = -1
         
-        cod_med = input("Qual o código do item que você deseja adicionar ao carrinho? ")
+        cod_med = input(colored("Qual o código do item que você deseja adicionar ao carrinho? ", TEXTCOLOR))
         
         consulta_sql = f"SELECT * FROM Medicamento WHERE cod_medicamento = {cod_med}"
         retorno = self.gerencia.acessa_banco(consulta_sql)
@@ -31,7 +36,7 @@ class Venda_itens:
                 contador+1
                             
             
-            qtd_med = input("Qual a quantidade do item que você deseja adicionar ao carrinho? ")
+            qtd_med = input(colored("Qual a quantidade do item que você deseja adicionar ao carrinho? ", TEXTCOLOR))
             qtd_med = int(qtd_med)
             consulta_sql = f"SELECT quantidade FROM Medicamento WHERE cod_medicamento = {int(cod_med)}"
             quantidade_disp = self.gerencia.acessa_banco(consulta_sql)
@@ -64,11 +69,11 @@ class Venda_itens:
             return 0
         
         for item in self.carrinho:
-            print("Codigo: ", item[0])
+            print(colored(("Codigo: ", item[0]), TEXTCOLOR))
             consulta_sql = f"SELECT nome FROM Medicamento WHERE cod_medicamento = {item[0]}"
             retorno = self.gerencia.acessa_banco(consulta_sql)
-            print("Nome: ", retorno[0])
-            print("Quantidade: ", item[1])
+            print(colored(("Nome: ", retorno[0]), TEXTCOLOR))
+            print(colored(("Quantidade: ", item[1]), TEXTCOLOR))
             print("")
             
         input("Pressione ENTER para continuar...")

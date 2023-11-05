@@ -5,9 +5,10 @@ from classes_entidades.pessoa import Pessoa
 from classes_entidades.medicamento import Medicamento
 from classes_entidades.carrinho import Venda_itens
 from classes_entidades.venda import Venda
-import termcolor
 from termcolor import colored
 
+TITLECOLOR = "blue"
+TEXTCOLOR = "yellow"
 
 # Funcoes auxiliares
 def limpar_tela():
@@ -21,11 +22,12 @@ def limpar_tela():
 def menu_principal():
     
     while (1):
-        print(colored("BEM VINDO A", "blue", attrs=["bold"]), colored("FARMACIA", "blue", attrs=["bold"]), colored("!\nSELECIONE A OPCAO DESEJADA\n", "blue", attrs=["bold"]))
-        print(colored("1- Ver produtos/Fazer compra", "yellow"))
-        print(colored("2- Area do funcionario", "yellow"))
-        print(colored("3- Area do cliente", "yellow"))
-        print(colored("0- Sair", "yellow"))
+        limpar_tela()
+        print(colored("BEM VINDO A", TITLECOLOR, attrs=["bold"]), colored("FARMACIA", TITLECOLOR, attrs=["bold"]), colored("!\nSELECIONE A OPCAO DESEJADA\n", TITLECOLOR, attrs=["bold"]))
+        print(colored("1- Ver produtos/Fazer compra", TEXTCOLOR))
+        print(colored("2- Area do funcionario", TEXTCOLOR))
+        print(colored("3- Area do cliente", TEXTCOLOR))
+        print(colored("0- Sair", TEXTCOLOR))
         opcao_principal = input()
         
         
@@ -51,14 +53,12 @@ def menu_principal():
             
         limpar_tela()
                     
-        
-
 def menu_ver_prod():
     limpar_tela()
     
-    print("-----------------------------------Produtos disponíveis-----------------------------------\n")
+    print(colored("-----------------------------------Produtos disponíveis-----------------------------------\n", TITLECOLOR))
     med.listar_todos_med()
-    print("\nO que você deseja: [0] Filtrar produtos    [1] Adicionar item ao carrinho    [2] Ver carrinho    [3] Finalizar compra    [4] Retirar filtro    [5]Voltar")
+    print(colored("\nO que você deseja:", TITLECOLOR), colored("\n[0] Filtrar produtos\n[1] Adicionar item ao carrinho\n[2] Ver carrinho\n[3] Finalizar compra\n[4] Retirar filtro\n[5] Voltar", TEXTCOLOR))
     
     quis_filtrar = 0
     while(1):
@@ -100,21 +100,21 @@ def menu_ver_prod():
             
         if(quis_filtrar == 0):
             limpar_tela()
-            print("-----------------------------------Produtos disponíveis-----------------------------------\n")
+            print(colored("-----------------------------------Produtos disponíveis-----------------------------------\n", TITLECOLOR))
             med.listar_todos_med()
-            print("\nO que você deseja: [0] Filtrar produtos    [1] Adicionar item ao carrinho    [2] Ver carrinho    [3] Finalizar compra    [4]Retirar filtro    [5]Voltar")
+            print(colored("\nO que você deseja:", TITLECOLOR), colored("\n[0] Filtrar produtos\n[1] Adicionar item ao carrinho\n[2] Ver carrinho\n[3] Finalizar compra\n[4] Retirar filtro\n[5] Voltar", TEXTCOLOR))
         else:
             limpar_tela()
-            print("-----------------------------------Produtos disponíveis (Filtrado)-----------------------------------\n")
+            print(colored("-----------------------------------Produtos disponíveis (Filtrado)-----------------------------------\n", TITLECOLOR))
             for linha in retorno:
-                print("NOME:", linha[1])
-                print("VALOR: ", linha[2])
-                print("CATEGORIA:", linha[3])
-                print("PRODUZIDO P/ MARI: ", linha[4])
-                print("ESTOQUE: ",linha[5])
-                print("CÓDIGO: ", linha[0])
+                print(colored(("NOME:", linha[1]), TEXTCOLOR))
+                print(colored(("VALOR: ", linha[2]), TEXTCOLOR))
+                print(colored(("CATEGORIA:", linha[3]), TEXTCOLOR))
+                print(colored(("PRODUZIDO P/ MARI: ", linha[4]), TEXTCOLOR))
+                print(colored(("ESTOQUE: ",linha[5]), TEXTCOLOR))
+                print(colored(("CÓDIGO: ", linha[0]), TEXTCOLOR))
                 print("")
-            print("\nO que você deseja: [0] Filtrar produtos    [1] Adicionar item ao carrinho    [2] Ver carrinho    [3] Finalizar compra    [4]Retirar filtro    [5]Voltar")
+            print(colored("\nO que você deseja: ", TITLECOLOR), colored("\n[0] Filtrar produtos\n[1] Adicionar item ao carrinho\n[2] Ver carrinho\n[3] Finalizar compra\n[4] Retirar filtro\n[5] Voltar", TEXTCOLOR))
             
 
 
@@ -123,7 +123,7 @@ def menu_pessoa():
     while (1):
         limpar_tela()
         print(colored("1 - Inserir pessoa\n2 - Ver todas pessoas cadastradas\n3 - Excluir pessoa\n4 - Pesquisar por nome\
-                       \n5 - Editar pessoa\n6 - Pesquisar por CPF\n7 - Gerar relatório\n0 - Sair\n", "red"))
+                       \n5 - Editar pessoa\n6 - Pesquisar por CPF\n7 - Gerar relatório\n0 - Sair\n", TEXTCOLOR))
         opcao = input()
 
         if opcao == "1":
@@ -160,12 +160,13 @@ def menu_pessoa():
 
         limpar_tela()
         
-def area_funcionario(self):
-    print("Area do funcionario")
+def area_funcionario():
+    print(colored("Area do funcionario", TITLECOLOR))
     logado = pessoa.tenta_login()
     if(logado == 1):
         while(1):
-            print(colored("1 - Gerenciar vendas\n2 - Gerenciar estoque\n3 - Gerenciar cadastros\n0 - Sair", "red"))
+            limpar_tela()
+            print(colored("1 - Gerenciar vendas\n2 - Gerenciar estoque\n3 - Gerenciar cadastros\n0 - Sair", TEXTCOLOR))
             opcao = input()
             if(opcao == '1'):
                 venda.gerenciar_vendas()
@@ -181,10 +182,11 @@ def area_funcionario(self):
         
     limpar_tela()
 
-def gerenciar_estoque(self):
+def gerenciar_estoque():
 
-    print(colored("1 - Cadastrar estoque\n2 - Filtrar produtos com menos de 5 unidades \n3 - Outras opcões de filtro\n0 - Sair", "red"))
     while(1):
+        limpar_tela()
+        print(colored("1 - Cadastrar estoque\n2 - Exibir produtos com menos de 5 unidades \n3 - Filtrar medicamentos\n4 - Editar Medicamento\n0 - Sair", TEXTCOLOR))
         opcao = input()
         
         if (opcao == '1'): 
@@ -192,7 +194,19 @@ def gerenciar_estoque(self):
         elif (opcao == '2'): 
             med.procurar_menos_5unid()
         elif(opcao == '3'):
-            med.filtrar_medicamento()
+            retorno = med.filtrar_medicamento()
+            for linha in retorno:
+                print(colored(("NOME:", linha[1]), TEXTCOLOR))
+                print(colored(("VALOR: ", linha[2]), TEXTCOLOR))
+                print(colored(("CATEGORIA:", linha[3]), TEXTCOLOR))
+                print(colored(("PRODUZIDO P/ MARI: ", linha[4]), TEXTCOLOR))
+                print(colored(("ESTOQUE: ",linha[5]), TEXTCOLOR))
+                print(colored(("CÓDIGO: ", linha[0]), TEXTCOLOR))
+                print("")
+
+            input("\nPressione ENTER para continuar")   
+        elif(opcao == '4'):
+            med.editar_medicamento()
         elif(opcao == '0'):
             return 0
         else: 

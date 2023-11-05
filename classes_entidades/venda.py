@@ -3,6 +3,10 @@ from gerencia_sql import Gerenciamento
 import datetime
 from datetime import date
 import random
+from termcolor import colored
+
+TITLECOLOR = 'blue'
+TEXTCOLOR = 'yellow'
 
 class Venda:
 
@@ -12,7 +16,7 @@ class Venda:
     
     def registrar_venda(self, total_carrinho):
         
-        print("CPF do funcionario responsável pela venda: ")
+        print(colored("CPF do funcionario responsável pela venda: ", TITLECOLOR))
         cpf_func = input()
         
         comando_sql = f"SELECT * FROM Funcionario WHERE cpf = '{cpf_func}'"
@@ -23,7 +27,7 @@ class Venda:
             return -1
         
         
-        print("CPF do cliente: ")
+        print(colored("CPF do cliente: ", TITLECOLOR))
         cpf_cli = input()
         
         comando_sql = f"SELECT * FROM Cliente WHERE cpf = '{cpf_cli}'"
@@ -41,23 +45,23 @@ class Venda:
             if(retorno == 0): 
                 break
         
-        print("Código da venda realizada: ", cod_venda)
+        print(colored(f"Código da venda realizada: {cod_venda}", TITLECOLOR))
         
         data_venda = datetime.date.today()
-        print("Data de realizacao da venda: ", data_venda)
+        print(colored(f"Data de realizacao da venda: {data_venda}", TITLECOLOR))
         
         
-        print("Valor total da compra: ", total_carrinho)
+        print(colored(f"Valor total da compra: {total_carrinho}", TITLECOLOR))
         
         checar_desconto = f"SELECT C.is_flamengo, C.ve_onepiece, E.cidade FROM Cliente C, Endereco E WHERE C.cpf = '{cpf_cli}' AND C.cpf = E.cpf"
         retorno = self.gerencia.acessa_banco(checar_desconto)
         if(retorno[0][0] == 1 or retorno[0][1] == 1 or retorno[0][2] == "sousa"):
             total_desconto = float(total_carrinho) * 0.9
-            print("Valor apos desconto: ", total_desconto)
+            print(colored(f"Valor apos desconto: {total_desconto}", TITLECOLOR))
             
         
         while(1):
-            forma_pagamento = input("Forma de pagamento da compra: \n[1] Cartao \n[2] boleto \n[3] pix \n[4] berries \n[5] Voltar ao menu\n")
+            forma_pagamento = input(colored("Forma de pagamento da compra:", TITLECOLOR), colored("\n[1] Cartao \n[2] boleto \n[3] pix \n[4] berries \n[5] Voltar ao menu\n", TEXTCOLOR))
             
             if (forma_pagamento == '1'):
                 forma_pagamento = "cartao"
@@ -82,7 +86,7 @@ class Venda:
         
         
         while(1):
-            status_venda = input("Status de confirmacao da compra: [1] finalizada [2] em andamento")
+            status_venda = input(colored("Status de confirmacao da compra:", TITLECOLOR), colored("\n[1] finalizada\n[2] em andamento", TEXTCOLOR))
             
             if(status_venda == '1'):
                 status_venda = "finalizada"
@@ -122,20 +126,20 @@ class Venda:
             return -1
         
         for i in range(len(retorno)):
-            print("Codigo da venda: ", retorno[i][0])
-            print("CPF do funcionario responsavel: ", retorno[i][1])
-            print("CPF do cliente: ", retorno[i][2])
-            print("Data da venda: ", retorno[i][3])
-            print("Valor total da compra: ", retorno[i][4])
-            print("Valor com desconto: ", retorno[i][5])
-            print("Forma de pagamento: ", retorno[i][6])
-            print("Status da venda: ", retorno[i][7])
+            print(colored(("Codigo da venda: ", retorno[i][0]), TEXTCOLOR))
+            print(colored(("CPF do funcionario responsavel: ", retorno[i][1]), TEXTCOLOR))
+            print(colored(("CPF do cliente: ", retorno[i][2]), TEXTCOLOR))
+            print(colored(("Data da venda: ", retorno[i][3]), TEXTCOLOR))
+            print(colored(("Valor total da compra: ", retorno[i][4]), TEXTCOLOR))
+            print(colored(("Valor com desconto: ", retorno[i][5]), TEXTCOLOR))
+            print(colored(("Forma de pagamento: ", retorno[i][6]), TEXTCOLOR))
+            print(colored(("Status da venda: ", retorno[i][7]), TEXTCOLOR))
             print("\n")
         
         input("Pressione enter para continuar")
         
     def finalizar_venda(self):
-        print("Digite o codigo da venda: ")
+        print(colored("Digite o codigo da venda: ", TITLECOLOR))
         cod_venda = input()
         
         comando_sql = f"SELECT * FROM Venda WHERE cod_venda = '{cod_venda}'"
@@ -191,12 +195,12 @@ class Venda:
     def gerenciar_vendas(self):
         
         while(1):
-            print("Gerenciamento de vendas")
-            print("[1] Consultar todas as vendas")
-            print("[2] Finalizar venda")
-            print("[3] Gerar relatorio de vendas")
-            print("[4] Gerar relatorio mensal funcionario")
-            print("[5] Voltar ao menu principal")
+            print(colored("Gerenciamento de vendas", TITLECOLOR))
+            print(colored("[1] Consultar todas as vendas", TEXTCOLOR))
+            print(colored("[2] Finalizar venda", TEXTCOLOR))
+            print(colored("[3] Gerar relatorio de vendas", TEXTCOLOR))
+            print(colored("[4] Gerar relatorio mensal funcionario", TEXTCOLOR))
+            print(colored("[5] Voltar ao menu principal", TEXTCOLOR))
             
             opcao = input()
 
