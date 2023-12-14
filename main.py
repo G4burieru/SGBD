@@ -218,9 +218,9 @@ def gerenciar_estoque():
 
 
 # Configurações de conexão
-host = "aws.connect.psdb.cloud"
-usuario = "0qlu6gn8jx2b99ls14um"
-senha = "pscale_pw_25n9ZWqX4wE0tktkqU3KRDoRn8nQj5EHwHL9HMqzOy"
+host = 
+usuario = 
+senha = 
 banco_de_dados = "farmacia"
 
 
